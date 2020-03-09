@@ -2,7 +2,7 @@
 
 | Student's name | SCIPER |
 | -------------- | ------ |
-| | |
+| Lucas Strauss | 272432 |
 | | |
 | | |
 
@@ -23,4 +23,3 @@
 ## Milestone 3 (Thursday 28th May, 5pm)
 
 **80% of the final grade**
-
