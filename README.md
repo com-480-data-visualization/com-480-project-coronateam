@@ -18,25 +18,33 @@ Find a dataset (or multiple) that you will explore. Assess the quality of the da
 Hint: some good pointers for finding quality publicly available datasets (Google dataset search, Kaggle, OpenSwissData, SNAP and FiveThirtyEight)
 
  - Hopkins University Repo for Coronavirus: https://github.com/CSSEGISandData/COVID-19
- - Gtrend python api: 
- - Twitter api: + dataset twitter
- 
+ - Gtrend python api:
+ - Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
+
 ### Problematic
 Frame the general topic of your visualization and the main axis that you want to develop.
 
  - What am I trying to show with my visualization?
  - Think of an overview for the project, your motivation, and the target audience.
- 
- 
+
+
 ### Exploratory Data Analysis
 Pre-processing of the data set you chose:
  - Show some basic statistics and get insights about the data
- 
+
 ### Related Work
  - What others have already done with the data?
  - Why is your approach original?
  - What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
  - In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
+
+There has already been quite some work on the recent Coronavirus pandemic. The most notable is probably the one on the genetic evolutions of the virus' mutations by the Nextstrain team (https://nextstrain.org/ncov). Some journals have already published some simple infographics such as https://www.ft.com/coronavirus-latest and https://labs.letemps.ch/interactive/2020/carte-coronavirus-monde.
+
+Original approach: ???
+
+Inspiration: cartogram ?
+
+ François Quellec has previously worked on an [article](https://github.com/labsletemps/coronavirus-trends) that has been published on the swiss magazine "Le Temps" using the Johns-Hopkins dataset, Google Trends, LinkAlong and the Twitter API. We may reuse the same datasets (especially the Johns-Hopkins) but our visualization will be different and we aim at representing all Europe (and the entire world if the data allows us).
 
 ## Milestone 2 (Friday 1st May, 5pm)
 **10% of the final grade**
