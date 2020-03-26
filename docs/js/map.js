@@ -20,7 +20,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
   var dataTweets = data[1];
   var dataCorona = data[2];
 
-  var formatDateIntoDay = d3.timeFormat("%d/%m");
+  var formatDateIntoDay = d3.timeFormat("%B %d, %Y");
   var parseDate = d3.timeFormat("%Y-%m-%d");
 
   var currentDate = null;
@@ -60,7 +60,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
     .on('mouseover', function(d) {
       d3.select(this).style('stroke', 'black');
       d3.event.preventDefault();
-      displayDetail(d);
+      //displayDetail(d);
     }).on('mouseout', function(d) {
       d3.select(this).style('stroke', '#abb7b7');
     }).on("click", function(d) {
@@ -79,6 +79,18 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
     .html(function() {
       var location = d.properties.name;
       var infos = d3.map(dataMap.get(d.id)) || d3.map();
+      return `
+      <div class="header">${location}<li class="fas fa-times close-button" onclick="hideDetail();"></li></div>
+      <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
+      <canvas id="infosCountryChart"></canvas>
+      <div class="stats">
+        <div><strong>Cases</strong>${infos.get('Confirmed') || 0  }</div>
+        <div><strong>Recovered</strong>N/A</div>
+        <div><strong>Deaths</strong>${infos.get('Deaths') || 0  }</div>
+      </div>
+      `;})
+    drawChart()
+      /*
       return `<h4>${location}</h4>
         <p><span class="stats">Nombre total de tweets geolocalisés par semaine</span> ${tweetsMap.get(d.id) || 0}</p>
         <p><span class="stats">Cas confirmés par million d'habitants</span> ${Math.round(infos.get('ConfirmedRatio') * 100) / 100 || 0  }</p>
@@ -87,8 +99,10 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
         <p><span class="stats">Date</span> ${formatDateIntoDay(currentDate)}</p>
       `;})
       .style('opacity', 1);
+      */
     }
 
+  
   // Update the map
   var displayMap = function(data){
     svg.selectAll("path").attr("fill", function (d) {
@@ -301,3 +315,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
       .attr('alignment-baseline', 'middle')
       .attr('text-anchor', 'end')
 });
+
+function hideDetail() {
+    d3.select(".map-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
+  }
