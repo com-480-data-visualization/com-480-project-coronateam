@@ -1,9 +1,15 @@
 body {
-	margin: 90px 0 0 0;
+	margin: 0 0 0 0;
 	background-color: #ffffff;
 	color: #6d6c6c;
 	font-family: 'Montserrat', sans-serif;
 	line-height: 1.5;
+	padding:0; 
+	margin:0; 
+	position:absolute; 
+	width:100%; 
+	height:100%; 
+	overflow:hidden
 }
 
 nav {
@@ -11,25 +17,14 @@ nav {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 	font-family: verdana;
 	left: 0;
-	line-height: 40px;
-	height: 40px;
+	height: 50px;
 	padding-left: 10px;
 	position: fixed;
 	right: 0;
 	top: 0;
 	vertical-align: middle;
 	z-index: 999;
-}
-
-nav a {
-	border: medium none;
-	text-decoration: none;
-}
-
-nav ul {
-	display: inline;
-	margin: 0;
-	padding: 0;
+	width: 100%;
 }
 
 h1, h2, h3{
@@ -72,8 +67,43 @@ li {
 
 .nav-item {
   margin: 0;
+  bottom:0;
 }
 
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
 
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
 
 

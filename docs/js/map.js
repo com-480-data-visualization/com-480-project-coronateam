@@ -1,20 +1,13 @@
-// The svg
- var svg = d3.select("#map")
-   // Container class to make it responsive.
-   .classed("svg-container", true)
-   .append("svg")
-   // Responsive SVG needs these 2 attributes and no width and height attr.
-   .attr("preserveAspectRatio", "xMinYMin meet")
-   .attr("viewBox", "0 0 1000 500")
-   // Class to make it responsive.
-   .classed("svg-content-responsive", true)
-   // Fill with a rectangle for visualization.
-   .append("g")
-   .attr("width", 1000)
-   .attr("height", 500);
+var width = window.innerWidth,
+    height = window.innerHeight;
 
-width = svg.attr('width');
-height = svg.attr('height');
+// The svg
+ var svg = d3.select("#map")  
+   .append("svg")
+   .attr("viewBox", "0 0 " + width + " "+ height)
+   .append("g")
+   .attr("width", width)
+   .attr("height", height);
 
 // Map and projection/Zoom
 var projection = d3.geoMercator()
@@ -164,10 +157,10 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
   var idBtn_3  =  'date-3';
   var idBtn_4  =  'date-4';
 
-  var date1Button = d3.select("#" + idBtn_1).style('top', '20%').html(dates[0]);
-  var date2Button = d3.select("#" + idBtn_2).style('top', '20%').html(dates[1]);
-  var date3Button = d3.select("#" + idBtn_3).style('top', '20%').html(dates[2]);
-  var date4Button = d3.select("#" + idBtn_4).style('top', '20%').html(dates[3]);
+  var date1Button = d3.select("#" + idBtn_1).html(dates[0]);
+  var date2Button = d3.select("#" + idBtn_2).html(dates[1]);
+  var date3Button = d3.select("#" + idBtn_3).html(dates[2]);
+  var date4Button = d3.select("#" + idBtn_4).html(dates[3]);
 
   var parser = d3.timeParse("%d/%m/%y");
 
