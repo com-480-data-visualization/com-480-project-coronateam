@@ -11,3 +11,7 @@
 .map-details {
   padding: 1em;
 }
+
+svg.icon {
+  pointer-events: none;
+}
