@@ -29,8 +29,13 @@ Frame the general topic of your visualization and the main axis that you want to
 
 
 ### Exploratory Data Analysis
-Pre-processing of the data set you chose:
- - Show some basic statistics and get insights about the data
+The main objective of the project is to study the geographical correlation between the Coronavirus and different types of information systems. 
+In order to see if there is a correlation with the number of tweets talking about it and the number of Google searches, we first plotted these figures 
+for 4 European countries that were affected early by the coronavirus.
+
+![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus") 
+
+![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus") 
 
 ### Related Work
  - What others have already done with the data?
