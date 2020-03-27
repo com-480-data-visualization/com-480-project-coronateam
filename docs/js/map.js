@@ -163,28 +163,6 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
   ///////////////////////////////////////////
   /////////////////SELECTOR//////////////////
   ///////////////////////////////////////////
-
-  var dates = ['19/02/20', '26/02/20', '04/03/20', '11/03/20']
-
-  var idBtn_1  =  'date-1';
-  var idBtn_2  =  'date-2';
-  var idBtn_3  =  'date-3';
-  var idBtn_4  =  'date-4';
-
-  var date1Button = d3.select("#" + idBtn_1).html(dates[0]);
-  var date2Button = d3.select("#" + idBtn_2).html(dates[1]);
-  var date3Button = d3.select("#" + idBtn_3).html(dates[2]);
-  var date4Button = d3.select("#" + idBtn_4).html(dates[3]);
-
-  var parser = d3.timeParse("%d/%m/%y");
-
-  document.getElementById(idBtn_1).onclick = function() {update(parser(dates[0]))};
-  document.getElementById(idBtn_2).onclick = function() {update(parser(dates[1]))};
-  document.getElementById(idBtn_3).onclick = function() {update(parser(dates[2]))};
-  document.getElementById(idBtn_4).onclick = function() {update(parser(dates[3]))};
-
-  document.getElementById(idBtn_1).click();
-
   function updateDatasets(h){
       currentDate = h;
       // filter data set and draw map and bubbles
@@ -219,7 +197,6 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
 
     dataMap = d3.map(dataMap)
   }
-
   function update(h) {
     updateDatasets(h);
     displayMap(dataMap);
@@ -228,6 +205,30 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
       displayDetail(currentCountry)
   }
 
+  var parser = d3.timeParse("%d/%m/%y");
+  var dates = ['19/02/20', '26/02/20', '04/03/20', '11/03/20'].map(x => parser(x));
+
+  $(".js-range-slider").ionRangeSlider({
+            values: dates,
+            from: 0,
+            grid: true,
+            skin: "flat",
+            prettify: formatDateIntoDay, 
+            onStart: function (data) {
+              // fired then range slider is ready
+              update(data.from_value)
+            },
+            onChange: function (data) {
+              // fired on every range slider update
+              update(data.from_value)
+            },
+            onFinish: function (data) {
+              update(data.from_value)
+            },
+            onUpdate: function (data) {
+              update(data.from_value)
+            }
+   });
 
 ///////////////////////////////////////////
 //////////////////LEGEND///////////////////

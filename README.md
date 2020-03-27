@@ -35,7 +35,13 @@ for 4 European countries that were affected early by the coronavirus.
 
 ![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus") 
 
+We can see here blablabla
+
 ![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus") 
+
+We can see here blablabla
+
+So we will blablabla
 
 ### Related Work
  - What others have already done with the data?

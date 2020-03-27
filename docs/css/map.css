@@ -100,3 +100,29 @@
 svg.icon {
   pointer-events: none;
 }
+
+.wrapper {
+  display: grid;
+  justify-items:center;
+  position: absolute;
+  bottom: 1em;
+  width: 100%;
+}
+
+.dateSliderContainer {
+  column-gap: 24px;
+  display: grid;
+  grid-template-columns: max-content auto;
+  width: 50%;
+}
+
+i.fa-play{
+    font-size: 20px;
+    color: #ed5565;
+  }
+
+
+#playButton {
+  margin-right: 1em;
+  padding-top: 10px;
+}

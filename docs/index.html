@@ -21,16 +21,16 @@
 
 		<!-- CSS -->
 		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="lib/ion.rangeSlider-master/css/ion.rangeSlider.min.css"/>
 		<link rel="stylesheet" type="text/css" href="css/main.css"/>
 		<link rel="stylesheet" type="text/css" href="css/map.css"/>
 
-
 		<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-		 
+
 	</head>
 	<body>
 
-
+		<!--   Header  -->
 		<nav class="navbar navbar-expand-lg navbar-light bg-light" id="topnav">
 	        <div class="container-fluid">
 	            <a class="navbar-brand" href="#">COVID-19 Infodemic</a>
@@ -62,24 +62,13 @@
         </div>
 
 		<!-- dates selector -->
-		<div class="row">
-			<div class="col-lg-10 col-sm-12">
-				<ul class="nav nav-pills" id="pills-tab" role="tablist">
-					<li class="nav-item">
-				  		<a id="date-1" data-toggle="pill" class="nav-link active" role="tab" aria-controls="pills-home" aria-selected="true" href="#">22/02</a>
-				  	</li>
-				  	<li class="nav-item">
-				  		<a id="date-2" data-toggle="pill" class="nav-link " role="tab" aria-controls="pills-home" aria-selected="true" href="#">29/02</a>
-				  	</li>
-				  	<li class="nav-item">
-				  		<a id="date-3" data-toggle="pill" class="nav-link " role="tab" aria-controls="pills-home" aria-selected="true" href="#">07/03</a>
-				  	</li>
-				  	<li class="nav-item">
-				 		 <a id="date-4" data-toggle="pill" class="nav-link " role="tab" aria-controls="pills-home" aria-selected="true" href="#">14/03</a>
-				 	</li>
-				</ul>
-			</div>
-		</div>
+        <div class="wrapper">	       
+        	<div class="dateSliderContainer"> 		
+	        	<button class="btn" id="playButton"><i class="fas fa-play"></i></button>
+	        	<input type="text" class="js-range-slider" name="dateSlider" value="" />
+	        </div>
+	    </div>
+        
 	</div>
 
 
@@ -91,19 +80,10 @@
 		<script src="lib/d3.min.js"></script>
 		<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+		<script src="lib/ion.rangeSlider-master/js/ion.rangeSlider.min.js"/>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
 	  	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 	  	<script src="js/map.js"></script>
 	  	<script src="js/infosCountryChart.js"></script>
-
-
-	  	<script type="text/javascript">
-			$(document).ready(function () {
-			    $('#sidebarCollapse').on('click', function () {
-			        $('#sidebar').toggleClass('active');
-			    });
-
-			});
-		</script>
 	</body>
 </html>
