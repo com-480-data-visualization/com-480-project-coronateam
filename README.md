@@ -31,9 +31,9 @@ Hopkins University repository for Coronavirus: https://github.com/CSSEGISandData
 ##### Tweets
 We then decided to represent a part of the spread of the information on the social network Tweeter, a certain number of tweet are geolocalized so it could be interesting to compare the evolution of the virus with the number of reactions from the population geographically.
 
-BLABLABLA
-
 Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
+
+This repository is interesting because it already regroup Coronaviruses tweets. We "only" have to hydrate them (i.e. from each tweet ID, get the corresponding tweet from the Twitter API). Because we only care about the location of the tweets we don't know how easy it is.
 
 ##### Google searches
 Finally the last aspect we want to represent is the number of google searches according to regions. Indeed, combined with the number of tweet this could be a good indicator of the anxiety-provoking climate that reigns in Europe at the moment.
@@ -67,18 +67,13 @@ With regard to the number of tweets about COVID-19, although trends and uses are
 The two graphs presented above clearly show a correlation between the population's reactions on Twitter or Google and the geographical evolution of the epidemic. These results comfort us in the desire to visualize these variables on an interactive map.
 
 ### Related Work
- - What others have already done with the data?
- - Why is your approach original?
- - What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
- - In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
-
 There has already been quite some work on the recent Coronavirus pandemic. The most notable is probably the one on the genetic evolutions of the virus' mutations by the Nextstrain team (https://nextstrain.org/ncov). Some journals have already published some simple infographics such as https://www.ft.com/coronavirus-latest and https://labs.letemps.ch/interactive/2020/carte-coronavirus-monde.
 
-Original approach: ???
+Original approach:Most of the actual vizualizations are on the medical part of the pandemic. Our main focus will be to vizualize the digital impact of the virus, not the number of cases. We may find correlations or decorrelations between our datasets and that's what we want to empathize on.
 
-Inspiration: cartogram ?
 
- François Quellec has previously worked on an [article](https://github.com/labsletemps/coronavirus-trends) that has been published on the swiss magazine "Le Temps" using the Johns-Hopkins dataset, Google Trends, LinkAlong and the Twitter API. We may reuse the same datasets (especially the Johns-Hopkins) but our visualization will be different and we aim at representing all Europe (and the entire world if the data allows us).
+Inspiration: ![cartogram](https://cdn.radiofrance.fr/s3/cruiser-production/2012/04/a8d2df12-8ef8-11e1-a6ab-842b2b72cd1d/838_cartogramme-lepen.jpg "Cartogram inspiration")
+We may add some 3D components to our map, similar to https://pudding.cool/2018/10/city_3d.
 
 ## Milestone 2 (Friday 1st May, 5pm)
 **10% of the final grade**
