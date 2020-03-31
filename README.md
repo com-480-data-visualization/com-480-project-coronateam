@@ -21,28 +21,26 @@ Many dashboards providing information on Covid-19 have recently emerged but none
 
 ### Dataset
 
+##### Coronavirus Informations
 To begin with, we decided to represent three different pieces of information about the coronavirus. The first one being obviously the different statistics related to the spread of the virus.
 
+BLABLABLA the dataset is like that, you can find it here BLABLABLA
+
+Hopkins University repository for Coronavirus: https://github.com/CSSEGISandData/COVID-19
+
+##### Tweets
 We then decided to represent a part of the spread of the information on the social network Tweeter, a certain number of tweet are geolocalized so it could be interesting to compare the evolution of the virus with the number of reactions from the population geographically.
 
+BLABLABLA
+
+Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
+
+##### Google searches
 Finally the last aspect we want to represent is the number of google searches according to regions. Indeed, combined with the number of tweet this could be a good indicator of the anxiety-provoking climate that reigns in Europe at the moment.
 
-The different datasets are described below:
+In order to acquire a dataset on the number of google searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website, the scripts we've made to construct the dataset are in the scripts/ folder.
 
- ##### Coronavirus Informations
- BLABLABLA
-
- Hopkins University repository for Coronavirus: https://github.com/CSSEGISandData/COVID-19
-
- ##### Tweets
- BLABLABLA
-
- Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
-
- ##### Google searches
- In order to acquire a dataset on the number of twitter searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website, the scripts to construct the dataset are in the scripts/ folder.
-
-  Unfornately Google Trend makes accessible only an index representing the popularity of a search, here "Coronavirus", depending on the day and the country concerned, so we will have to adapt the indexes to have a smaller granularity.
+Unfornately Google Trend makes accessible only an index representing the popularity of a search, here "Coronavirus", depending on the day and the country concerned, so we will have to adapt the indexes to have a smaller granularity.
 
 ### Problematic
 Frame the general topic of your visualization and the main axis that you want to develop.
@@ -59,14 +57,14 @@ for 4 European countries that were affected early by the coronavirus.
 ##### Google search index versus Coronavirus
 ![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus")
 
-We can see here blablabla
+We can see here that for Italy, the google search spike coincides perfectly with the outbreak of COVID-19 cases in the country it does seem to be correlated. It is also interesting to note that the countries bordering Italy see an increase in the number of searches a few days after Italy, these spikes seem to be related to the spread of the virus in Italy and not only in their respective countries.
 
 ##### Number of tweets versus Coronavirus
 ![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus")
 
-We can see here blablabla
+With regard to the number of tweets about COVID-19, although trends and uses are different in each country, the fluctuations still seem to be directly related to the spread of the virus in each country.
 
-So we will blablabla
+The two graphs presented above clearly show a correlation between the population's reactions on Twitter or Google and the geographical evolution of the epidemic. These results comfort us in the desire to visualize these variables on an interactive map.
 
 ### Related Work
  - What others have already done with the data?
