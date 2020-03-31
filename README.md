@@ -12,14 +12,37 @@
 
 **10% of the final grade**
 
+The Covid-19 has been much talked about, both in the media and on social networks, hundreds of thousands of posts on this subject are published every day around the world.
+Many denounce the anxiety that this amount of information about this pandemic creates.
+
+In order to better understand this infodemia we propose in this project to visualize this phenomenon on an interactive map of Europe.
+
+Many dashboards providing information on Covid-19 have recently emerged but none (to our knowledge) deals with the flow of information.
+
 ### Dataset
-Find a dataset (or multiple) that you will explore. Assess the quality of the data it contains and how much preprocessing / data-cleaning it will require before tackling visualization. We recommend using a standard dataset as this course is not about scraping nor data processing.
 
-Hint: some good pointers for finding quality publicly available datasets (Google dataset search, Kaggle, OpenSwissData, SNAP and FiveThirtyEight)
+To begin with, we decided to represent three different pieces of information about the coronavirus. The first one being obviously the different statistics related to the spread of the virus.
 
- - Hopkins University Repo for Coronavirus: https://github.com/CSSEGISandData/COVID-19
- - Gtrend python api:
- - Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
+We then decided to represent a part of the spread of the information on the social network Tweeter, a certain number of tweet are geolocalized so it could be interesting to compare the evolution of the virus with the number of reactions from the population geographically.
+
+Finally the last aspect we want to represent is the number of google searches according to regions. Indeed, combined with the number of tweet this could be a good indicator of the anxiety-provoking climate that reigns in Europe at the moment.
+
+The different datasets are described below:
+
+ ##### Coronavirus Informations
+ BLABLABLA
+
+ Hopkins University repository for Coronavirus: https://github.com/CSSEGISandData/COVID-19
+
+ ##### Tweets
+ BLABLABLA
+
+ Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
+
+ ##### Google searches
+ In order to acquire a dataset on the number of twitter searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website, the scripts to construct the dataset are in the scripts/ folder.
+
+  Unfornately Google Trend makes accessible only an index representing the popularity of a search, here "Coronavirus", depending on the day and the country concerned, so we will have to adapt the indexes to have a smaller granularity.
 
 ### Problematic
 Frame the general topic of your visualization and the main axis that you want to develop.
@@ -29,15 +52,17 @@ Frame the general topic of your visualization and the main axis that you want to
 
 
 ### Exploratory Data Analysis
-The main objective of the project is to study the geographical correlation between the Coronavirus and different types of information systems. 
-In order to see if there is a correlation with the number of tweets talking about it and the number of Google searches, we first plotted these figures 
+The main objective of the project is to study the geographical correlation between the Coronavirus and different types of information systems.
+In order to see if there is a correlation with the number of tweets talking about it and the number of Google searches, we first plotted these figures
 for 4 European countries that were affected early by the coronavirus.
 
-![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus") 
+##### Google search index versus Coronavirus
+![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus")
 
 We can see here blablabla
 
-![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus") 
+##### Number of tweets versus Coronavirus
+![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus")
 
 We can see here blablabla
 
