@@ -72,7 +72,9 @@ There has already been quite some work on the recent Coronavirus pandemic. The m
 Original approach: Most of the vizualizations found on the internet focus on the medical aspect of the pandemic. Here, we will also study the digital impact of the virus. Adding a spatial dimension to the analysis may also reveal interesting patterns of population reaction to the pandemic.
 
 
-Inspiration: ![cartogram](https://cdn.radiofrance.fr/s3/cruiser-production/2012/04/a8d2df12-8ef8-11e1-a6ab-842b2b72cd1d/838_cartogramme-lepen.jpg "Cartogram inspiration")
+Inspiration:
+A cartogram like visualization could be interesting if not too invasive. A French magazine produced some nice cartograms for the 2012 president election http://archiveweb.epfl.ch/choros.epfl.ch/page-79160-fr.html.
+
 We may add some 3D components to our map, similar to https://pudding.cool/2018/10/city_3d.
 
 #### References  
