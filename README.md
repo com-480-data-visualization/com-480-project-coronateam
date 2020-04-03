@@ -12,45 +12,43 @@
 
 **10% of the final grade**
 
-The COVID-19 has been much talked about, both in the media and on social networks, hundreds of thousands of posts on this subject are published every day around the world.
-Many denounce the anxiety that this amount of information about this pandemic creates.
-
-In order to better understand this infodemic we propose in this project to visualize this phenomenon on an interactive map of Europe.
-
-Many dashboards providing information on Covid-19 have recently emerged but none (to our knowledge) deals with the flow of information.
+In this project, we want to link the spread of the COVID-19 pandemic with its information flow on social network and web search.
 
 ### Dataset
 
 ##### Reported cases of COVID-19
-The first dataset we will use concerned the geolocalized reported cases of COVID-19 across the world, provided by the John Hopkins University (USA). In December 2019, a research team from the university launched an interactive web-based dashboard to track COVID-19 in real-time (Dong et al., 2020) using data from various sources. They make all the data collected and displayed freely available in Github for researchers and public health authorities.
+The first dataset that we will use consists of geolocalized reported COVID-19 cases. In December 2019, a research team from John Hopkins University released an interactive web-based dashboard to track COVID-19 in real-time (Dong et al., 2020) using data from various sources. All the data collected and displayed are freely accessible to researchers and public health authorities in Github.
 
-More specifically, we will use the time series daily summary, which is updated once a day and provides information about the number of confirmed cases, deaths and recoveries related to the Novel Coronavirus. Data are geolocalized using Lat/Lon coordinates at the Country/Region level or if known, the Province/State.
+More precisely, we will use the time series daily summary, which is updated once a day and provides information on the number of reported cases, deaths and recoveries associated with Novel Coronavirus. Data are geolocalized using Lat / Lon coordinates at Country / Region level or, if known, Province / State.
 
 CSSE COVID-19 Dataset repository: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data
 
 
 ##### Tweets
-We then decided to represent a part of the spread of the information on the social network Twitter, a certain number of tweet are geolocalized so it could be interesting to compare the evolution of the virus with the number of reactions from the population geographically.
+To estimate the information flow on social networks, we will use the COVID-19 mentions in Twitter.
+Approximately 1/4 of the tweets are geolocalized which allow us to compare the propagation of the virus and the population reaction on social networks.
 
 Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
 
-This repository is interesting because it already regroup Coronaviruses tweets. We "only" have to hydrate them (i.e. from each tweet ID, get the corresponding tweet from the Twitter API). Because we only care about the location of the tweets we don't know how easy it is.
+This repository is interesting because it already regroups tweets associated with COVID-19. We "only" have to hydrate them (i.e. from each tweet ID, get the corresponding tweet from the Twitter API). Because we only care about the location of the tweets we don't know how easy it is.
 
 ##### Google searches
-Finally the last aspect we want to represent is the number of google searches according to regions. Indeed, combined with the number of tweet this could be a good indicator of the anxiety-provoking climate that reigns in Europe at the moment.
+Finally the last aspect we want to represent is the number of web searches according to regions.
 
-In order to acquire a dataset on the number of google searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website, the scripts we've made to construct the dataset are in the scripts/ folder.
+In order to acquire a dataset on the number of google searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website, the scripts we have made to construct the dataset are in the scripts/ folder.
 
 Unfornately Google Trend makes accessible only an index representing the popularity of a search, here "Coronavirus", depending on the day and the country concerned, so we will have to adapt the indexes to have a smaller granularity.
 
 ### Problematic
 
-While there are a multitude of interactive maps available on COVID-19, the vast majority only depict the spread of the disease. In our research, we want to relate COVID-19's spatial distribution with the reaction of the population, defined here by the amount of information on both social networks (i.e. Twitter) and search engines (i.e. Google Trend).
+As the pandemic spreads around the world and population containment accelerates, social networks and search engines provide a window for people to learn and share about the virus. Mediatization of the pandemic shapes population's reaction to the virus, providing a support to rapidly share good practices about virus prevention but also a support for fake news spreading which could increase population anxiety.
+
+Despite the fact that there are a multitude of interactive maps available on COVID-19, the vast majority only depict the spread of the disease. In our research, we want to relate COVID-19's spatial distribution with population reaction, defined here by the amount of information on both social networks (i.e. Twitter) and search engines (i.e. Google Trend).
 
 Our main hypothesis is that the population response across European countries could be spatially heterogeneous, and not necessarily follow the spread of the pandemic.
 Indeed, although all European countries are now affected by the Novel Coronavirus, it can be seen that even neighboring countries have employed different policies to fight the pandemic. Therefore, we could expect different population response too.
 
-The central element of our visualization will be an interactive map, allowing the user to explore the link between the prevalence of the disease and the flow of information on social networks and search engines (i.e. a proxy for the population response in a specific country) as the pandemic spreads. Other visualizations will allow us to complete our analysis, e.g. by allowing the user to have a more detailed analysis for each country.
+The central element of our visualization will be an interactive map, allowing the user to explore the link between the prevalence of the disease and the flow of information on social networks and search engines (i.e. a proxy for the population response in a specific country) as the pandemic spreads. Other visualizations will allow us to complete our analysis, e.g. by allowing the user to have more detailed information for each country.
 
 
 ### Exploratory Data Analysis
@@ -73,7 +71,7 @@ The two graphs presented above clearly show a correlation between the population
 ### Related Work
 There has already been quite some work on the recent Coronavirus pandemic. The most notable is probably the one on the genetic evolutions of the virus' mutations by the Nextstrain team (https://nextstrain.org/ncov). Some journals have already published some simple infographics such as https://www.ft.com/coronavirus-latest and https://labs.letemps.ch/interactive/2020/carte-coronavirus-monde.
 
-Original approach:Most of the actual vizualizations are on the medical part of the pandemic. Our main focus will be to vizualize the digital impact of the virus, not the number of cases. We may find correlations or decorrelations between our datasets and that's what we want to empathize on.
+Original approach: Most of the actual vizualizations are on the medical part of the pandemic. Our main focus will be to vizualize the digital impact of the virus, not the number of cases. We may find correlations between our datasets and that's what we want to empathize on.
 
 
 Inspiration: ![cartogram](https://cdn.radiofrance.fr/s3/cruiser-production/2012/04/a8d2df12-8ef8-11e1-a6ab-842b2b72cd1d/838_cartogramme-lepen.jpg "Cartogram inspiration")
