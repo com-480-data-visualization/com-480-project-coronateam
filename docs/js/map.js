@@ -15,7 +15,8 @@ var projection = d3.geoMercator()
     .scale(1000)
     .translate([ width/2, height/2 ])
 
-Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
+//Promise.all([d3.json("data/europe_lvl2.geojson"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
+Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_day.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
   var dataGeo = data[0];
   var dataTweets = data[1];
   var dataCorona = data[2];
@@ -48,29 +49,29 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
     .selectAll("path")
     .data(dataGeo.features)
     .enter()
-    .append("path")
-    .attr("fill", function (d) {
-    return colorScaleCorona(1);
-    })
-    .attr("d", d3.geoPath()
-        .projection(projection)
-    )
-    .style("stroke", "#abb7b7")
-    .style("stroke-width", "1px")
-    .on('mouseover', function(d) {
-      d3.select(this).style('stroke', 'black');
-      d3.event.preventDefault();
-      //displayDetail(d);
-    }).on('mouseout', function(d) {
-      d3.select(this).style('stroke', '#abb7b7');
-    }).on("click", function(d) {
-      displayDetail(d);
-    })
-    .style("opacity", .6)
+      .append("path")
+      .attr("fill", function (d) {
+      return colorScaleCorona(1);
+      })
+      .attr("d", d3.geoPath()
+          .projection(projection)
+      )
+      .style("stroke", "#abb7b7")
+      .style("stroke-width", "1px")
+      .on('mouseover', function(d) {
+        d3.select(this).style('stroke', 'black');
+        d3.event.preventDefault();
+        //displayDetail(d);
+      }).on('mouseout', function(d) {
+        d3.select(this).style('stroke', '#abb7b7');
+      }).on("click", function(d) {
+        displayDetail(d);
+      })
+      .style("opacity", .6)
     .exit()
-    .transition().duration(200)
-    .attr("r",1)
-    .remove();
+      .transition().duration(200)
+      .attr("r",1)
+      .remove();
 
   // Display Infos by country
   function displayDetail(d) {
@@ -204,11 +205,31 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
     if(currentCountry != null)
       displayDetail(currentCountry)
   }
+  // Returns an array of dates between the two dates
+  var getDates = function(startDate, endDate) {
+    var dates = [],
+        currentDate = startDate,
+        addDays = function(days) {
+          var date = new Date(this.valueOf());
+          date.setDate(date.getDate() + days);
+          return date;
+        };
+    while (currentDate <= endDate) {
+      dates.push(currentDate.toLocaleDateString());
+      currentDate = addDays.call(currentDate, 1);
+    }
+    return dates;
+  };
 
-  var parser = d3.timeParse("%d/%m/%y");
-  var dates = ['19/02/20', '26/02/20', '04/03/20', '11/03/20'].map(x => parser(x));
+  // Usage
+  
 
-  $(".js-range-slider").ionRangeSlider({
+  var parser = d3.timeParse("%d/%m/%Y");
+  var dates = getDates(new Date(2020,1,19), new Date(2020,2,11)).map(x => parser(x))
+  var indexDate = 0
+
+  var $slider = $(".js-range-slider")
+  $slider.ionRangeSlider({
             values: dates,
             from: 0,
             grid: true,
@@ -220,6 +241,8 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
             },
             onChange: function (data) {
               // fired on every range slider update
+              indexDate = dates.indexOf(data.from_value);
+              pause()
               update(data.from_value)
             },
             onFinish: function (data) {
@@ -229,6 +252,58 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_we
               update(data.from_value)
             }
    });
+
+  
+
+  function nextDay(){
+    indexDate += 1;
+    console.log(indexDate)
+    if(indexDate < dates.length){
+      var slider_instance = $slider.data("ionRangeSlider");
+        slider_instance.update({
+          from: indexDate
+        });
+
+      update(dates[indexDate])
+    } else {
+      if(playing){
+        pause()
+      }
+    }
+
+  }
+
+  var timeBetweenDays = 100
+  var nextDayInterval = null
+  
+
+  var playing = false;
+  var playButton = document.getElementById('playButton');
+
+  function pause(){
+    playButton.innerHTML = '<i class="fas fa-play"></i>';
+    console.log("Pause")
+    playing = false;
+    clearInterval(nextDayInterval);
+  }
+
+  function play(){
+    playButton.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
+    
+    if(indexDate >= dates.length){
+      indexDate = 0
+      nextDay()
+    }
+
+    console.log("Play")
+    playing = true;
+    nextDayInterval = setInterval(nextDay,timeBetweenDays);
+  }
+
+  playButton.onclick = function(){
+    if(playing){ pause(); }
+    else{ play(); }
+  };
 
 ///////////////////////////////////////////
 //////////////////LEGEND///////////////////

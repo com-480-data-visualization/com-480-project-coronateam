@@ -121,6 +121,11 @@ i.fa-play{
     color: #ed5565;
   }
 
+i.fa-pause{
+    font-size: 20px;
+    color: #ed5565;
+  }
+
 
 #playButton {
   margin-right: 1em;

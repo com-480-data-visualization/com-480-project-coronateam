@@ -6,7 +6,7 @@ import sys
 APPEND_MODE = True
 OUTPUT_PATH = "interest_by_region.csv"
 KEYWORDS    = ["Coronavirus"]
-START_DATE  = '02/22/2020'                  # format %m/%d/%Y
+START_DATE  = '03/24/2020'                  # format %m/%d/%Y
 END_DATE    = pd.datetime.now().date()      
 
 pytrends = TrendReq(hl='en-US', tz=360, retries=10, backoff_factor=0.5)

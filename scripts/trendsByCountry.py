@@ -9,7 +9,7 @@ from pytrends.request import TrendReq
 APPEND_MODE = True
 OUTPUT_PATH = "interest_by_country.csv"
 KEYWORDS 	= ["Coronavirus"]
-START_DATE 	= '01/01/2020' 					# format %m/%d/%Y
+START_DATE 	= '03/24/2020' 					# format %m/%d/%Y
 END_DATE 	= pd.datetime.now().date()		
 
 pytrends = TrendReq(hl='en-US', tz=360)
