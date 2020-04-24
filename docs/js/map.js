@@ -13,7 +13,7 @@ var width = window.innerWidth,
 var projection = d3.geoMercator()
     .center([10,48])
     .scale(1000)
-    .translate([ width/2, height/2 ])
+    .translate([ width/2, height/2 ]);
 
 //Promise.all([d3.json("data/europe_lvl2.geojson"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
 Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_day.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
@@ -28,11 +28,12 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   var currentCountry = null;
 
   // Initialize datasets map and filter variables
-  var newDataTweets = []
+  var newDataTweets = [];
   var tweetsMap = d3.map();
 
-  var newDataCorona = []
+  var newDataCorona = [];
   var dataMap = d3.map();
+  //var dataMap = d3.cartogram();
 
   ///////////////////////////////////////////
   ////////////////////MAP////////////////////
@@ -89,7 +90,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
         <div><strong>Recovered</strong>N/A</div>
         <div><strong>Deaths</strong>${infos.get('Deaths') || 0  }</div>
       </div>
-      `;})
+      `;});
     drawChart()
       /*
       return `<h4>${location}</h4>
@@ -105,16 +106,40 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
 
   
   // Update the map
-  var displayMap = function(data){
-    svg.selectAll("path").attr("fill", function (d) {
-      var infos = d3.map(data.get(d.id));
-      d.total = infos.get('ConfirmedRatio') || 0;
-        return colorScaleCorona(d.total);
-      })
-      .attr("d", d3.geoPath()
-      .projection(projection))
+  var displayMap = function(dta){
+      data = dta.entries();
 
-  }
+      console.log('data:', data);
+
+      var deaths = function(d) {
+          return d.value['Deaths'];
+      };
+
+      var values = data.map(deaths)
+          .sort(d3.descending),
+      lo = values[0],
+      hi = values[values.length - 1];
+
+      var scale = d3.scaleLinear()
+          .domain([lo, hi])
+          .range([1, 1.01]);
+
+    svg.selectAll("path").attr("fill", function (d) {
+      var infos = d3.map(dta.get(d.id));
+      d.total = infos.get('ConfirmedRatio') || 0;
+      return colorScaleCorona(d.total);
+    })
+    .attr("d", d3.geoPath()
+        .projection(projection));
+
+    //Scale the countries for cartogram
+    /*svg.selectAll('path').attr('transform', function(d) {
+       const infos = d3.map(dta.get(d.id));
+       const s = scale(infos.get('Deaths') || 1);
+       console.log('scale:', s);
+       return 'scale(' + s + ')';
+    });*/
+  };
 
   ///////////////////////////////////////////
   ///////////////////BUBLES//////////////////
@@ -172,7 +197,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
 
       })
 
-      tweetsMap = {}
+      tweetsMap = {};
       newDataTweets.forEach(function(d){
         if (d['alpha-3'] in tweetsMap){
           tweetsMap[d['alpha-3']] = parseInt(tweetsMap[d['alpha-3']]) + parseInt(d.count);
@@ -181,7 +206,8 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
           tweetsMap[d['alpha-3']] = parseInt(d.count);
         }
       });
-      tweetsMap = d3.map(tweetsMap);
+      //tweetsMap = d3.map(tweetsMap);
+      tweetsMap = d3.cartogram(tweetsMap);
       newDataCorona = dataCorona.filter(function(d) {
         return d.date == parseDate(h);
       })

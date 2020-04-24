@@ -54,36 +54,43 @@
 	    </nav>
 
 	    <!-- Map container -->
-		<div id="map"></div>
-		
+		<div id="map" onmousedown="testDown(event)" onmousemove="testMove(event)" onmouseup="testUp()"></div>
+
 		<!-- Infos on countries -->
 		<div class="map-details">
          	<div class="header">Click on a country for more infos</div>
         </div>
 
 		<!-- dates selector -->
-        <div class="wrapper">	       
-        	<div class="dateSliderContainer"> 		
-	        	<button class="btn" id="playButton"><i class="fas fa-play"></i></button>
+        <div class="wrapper">
+        	<div class="dateSliderContainer">
+	        	<button class="btn" id="playButton" onclick="testButton()"><i class="fas fa-play"></i></button>
 	        	<input type="text" class="js-range-slider" name="dateSlider" value="" />
 	        </div>
 	    </div>
-        
+
 	</div>
 
 
-		
-		
-		
+
+
+
 		<!-- Libraries and scripts TODO: put them in local -->
 		<script src="lib/jquery-3.4.1.slim.min.js"></script>
 		<script src="lib/d3.min.js"></script>
+
+		<script src="js/colorbrewer.js"></script>
+		<script src="js/topojson.js"></script>
+		<script src="js/cartogram.js"></script>
+
 		<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-		<script src="lib/ion.rangeSlider-master/js/ion.rangeSlider.min.js"/>
+		<script src="lib/ion.rangeSlider-master/js/ion.rangeSlider.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
-	  	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-	  	<script src="js/map.js"></script>
-	  	<script src="js/infosCountryChart.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+		<script src="js/map.js"></script>
+		<script src="js/infosCountryChart.js"></script>
+		<!-- <script src="js/3d.js"></script> -->
+
 	</body>
 </html>

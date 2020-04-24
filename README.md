@@ -8,77 +8,80 @@
 
 [Milestone 1](#milestone-1-friday-3rd-april-5pm) • [Milestone 2](#milestone-2-friday-1st-may-5pm) • [Milestone 3](#milestone-3-thursday-28th-may-5pm)
 
+[Guidelines](https://com-480-data-visualization.github.io/2020-project-guidelines/)
+
 ## Milestone 1 (Friday 3rd April, 5pm)
 
 **10% of the final grade**
 
-The Covid-19 has been much talked about, both in the media and on social networks, hundreds of thousands of posts on this subject are published every day around the world.
-Many denounce the anxiety that this amount of information about this pandemic creates.
-
-In order to better understand this infodemia we propose in this project to visualize this phenomenon on an interactive map of Europe.
-
-Many dashboards providing information on Covid-19 have recently emerged but none (to our knowledge) deals with the flow of information.
+In this project, we want to link the spread of the COVID-19 pandemic with its information flow on social network and web search.
 
 ### Dataset
 
-##### Coronavirus Informations
-To begin with, we decided to represent three different pieces of information about the coronavirus. The first one being obviously the different statistics related to the spread of the virus.
+##### Reported cases of COVID-19
+The first dataset that we will use consists of geolocalized reported COVID-19 cases. In December 2019, a research team from John Hopkins University released an interactive web-based dashboard to track COVID-19 in real-time (Dong et al., 2020) using data from various sources. All the data collected and displayed are freely accessible to researchers and public health authorities on Github.
 
-BLABLABLA the dataset is like that, you can find it here BLABLABLA
+More precisely, we will use the time series daily summary, which is updated once a day and provides information on the number of reported cases, deaths and recoveries associated with Novel Coronavirus. Data are geolocalized using Lat / Lon coordinates at Country / Region level or, if known, Province / State.
 
-Hopkins University repository for Coronavirus: https://github.com/CSSEGISandData/COVID-19
+CSSE COVID-19 Dataset repository: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data
+
 
 ##### Tweets
-We then decided to represent a part of the spread of the information on the social network Tweeter, a certain number of tweet are geolocalized so it could be interesting to compare the evolution of the virus with the number of reactions from the population geographically.
-
-BLABLABLA
+To estimate the information flow on social networks, we will use the COVID-19 mentions on Twitter.
+Approximately 1/4 of the tweets are geolocalized which allow us to compare the propagation of the virus and the population reaction on social networks.
 
 Twitter api: + dataset twitter (https://github.com/echen102/COVID-19-TweetIDs)
 
+This repository is interesting because it already regroups tweets associated with COVID-19. We "only" have to hydrate them (i.e. from each tweet ID, get the corresponding tweet from the Twitter API).
+
 ##### Google searches
-Finally the last aspect we want to represent is the number of google searches according to regions. Indeed, combined with the number of tweet this could be a good indicator of the anxiety-provoking climate that reigns in Europe at the moment.
+Finally the last aspect we want to represent is the number of web searches according to regions.
 
-In order to acquire a dataset on the number of google searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website, the scripts we've made to construct the dataset are in the scripts/ folder.
+In order to acquire a dataset on the number of google searches by region in Europe we used [pytrends](https://pypi.org/project/pytrends/) a pseudo API for Google Trend website. The scripts we have made to construct the dataset are in the *scripts/* folder.
 
-Unfornately Google Trend makes accessible only an index representing the popularity of a search, here "Coronavirus", depending on the day and the country concerned, so we will have to adapt the indexes to have a smaller granularity.
+Unfornately Google Trend makes accessible only an index representing the popularity of a search (here "Coronavirus") depending on the day and the country concerned, so we will have to adapt the indexes to have a smaller granularity.
 
 ### Problematic
-Frame the general topic of your visualization and the main axis that you want to develop.
 
- - What am I trying to show with my visualization?
- - Think of an overview for the project, your motivation, and the target audience.
+As the pandemic spreads around the world and population containment accelerates, social networks and search engines provide a window for people to learn and share about the virus. Mediatization of the pandemic shapes population's reaction to the virus, providing a support to rapidly share good practices about virus prevention but also a support for fake news spreading which could increase population anxiety.
+
+Despite the fact that there are a multitude of interactive maps available on COVID-19, the vast majority only depict the spread of the disease. In our research, we want to relate COVID-19's spatial distribution with population reaction, defined here by the amount of information on both social networks (i.e. Twitter) and search engines (i.e. Google Trend).
+
+Our main hypothesis is that the population response across European countries could be spatially heterogeneous, and not necessarily follow the spread of the pandemic.
+Indeed, although all European countries are now affected by the Novel Coronavirus, it can be seen that even neighboring countries have employed different policies to fight the pandemic. Therefore, we could expect different population response too.
+
+The central element of our visualization will be an interactive map, allowing the user to explore the link between the prevalence of the disease and the flow of information on social networks and search engines (i.e. a proxy for the population response in a specific country) as the pandemic spreads. Other visualizations will allow us to complete our analysis, e.g. by allowing the user to have more detailed information for each country.
 
 
 ### Exploratory Data Analysis
-The main objective of the project is to study the geographical correlation between the Coronavirus and different types of information systems.
-In order to see if there is a correlation with the number of tweets talking about it and the number of Google searches, we first plotted these figures
-for 4 European countries that were affected early by the coronavirus.
+As our objective is to study the association between the spread of the pandemic and the flow of information on social network and search engines, we first plotted the correlation between reported cases, tweets, and web searches, for 4 European countries that were early affected by the disease.
 
-##### Google search index versus Coronavirus
+##### Google search index versus COVID-19 cases
 ![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus")
 
-We can see here that for Italy, the google search spike coincides perfectly with the outbreak of COVID-19 cases in the country it does seem to be correlated. It is also interesting to note that the countries bordering Italy see an increase in the number of searches a few days after Italy, these spikes seem to be related to the spread of the virus in Italy and not only in their respective countries.
+For Italy, the google search spike coincides perfectly with the outbreak of COVID-19 cases in the country. It is also interesting to note that the countries surrounding Italy are seeing an increase in the number of searches a few days after Italy, which seem to be related to the spread of the virus in Italy and not only in their respective countries.
 
-##### Number of tweets versus Coronavirus
+##### Number of tweets versus COVID-19 cases
 ![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus")
 
 With regard to the number of tweets about COVID-19, although trends and uses are different in each country, the fluctuations still seem to be directly related to the spread of the virus in each country.
 
-The two graphs presented above clearly show a correlation between the population's reactions on Twitter or Google and the geographical evolution of the epidemic. These results comfort us in the desire to visualize these variables on an interactive map.
+The two graphs presented above indicates a correlation between the reaction of the population on Twitter and Google, and the geographical evolution of the pandemic. These findings are encouraging us in the desire to explore these variables on an interactive map.
 
 ### Related Work
- - What others have already done with the data?
- - Why is your approach original?
- - What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
- - In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
-
 There has already been quite some work on the recent Coronavirus pandemic. The most notable is probably the one on the genetic evolutions of the virus' mutations by the Nextstrain team (https://nextstrain.org/ncov). Some journals have already published some simple infographics such as https://www.ft.com/coronavirus-latest and https://labs.letemps.ch/interactive/2020/carte-coronavirus-monde.
 
-Original approach: ???
+Original approach: Most of the vizualizations found on the internet focus on the medical aspect of the pandemic. Here, we will also study the digital impact of the virus. Adding a spatial dimension to the analysis may also reveal interesting patterns of population reaction to the pandemic.
 
-Inspiration: cartogram ?
 
- François Quellec has previously worked on an [article](https://github.com/labsletemps/coronavirus-trends) that has been published on the swiss magazine "Le Temps" using the Johns-Hopkins dataset, Google Trends, LinkAlong and the Twitter API. We may reuse the same datasets (especially the Johns-Hopkins) but our visualization will be different and we aim at representing all Europe (and the entire world if the data allows us).
+Inspiration:
+A cartogram like visualization could be interesting if not too invasive. A French magazine produced some nice cartograms for the 2012 president election http://archiveweb.epfl.ch/choros.epfl.ch/page-79160-fr.html.
+
+We may add some 3D components to our map, similar to https://pudding.cool/2018/10/city_3d.
+
+#### References  
+- Dong, E., Du, H., & Gardner, L. (2020). An interactive web-based dashboard to track COVID-19 in real time. The Lancet Infectious Diseases, S1473309920301201. https://doi.org/10.1016/S1473-3099(20)30120-1
+
 
 ## Milestone 2 (Friday 1st May, 5pm)
 **10% of the final grade**
