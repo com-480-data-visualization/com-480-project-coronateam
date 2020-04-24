@@ -77,7 +77,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   // Display Infos by country
   function displayDetail(d) {
     currentCountry = d;
-    d3.select(".map-details")
+    d3.select(".country-details")
     .html(function() {
       var location = d.properties.name;
       var infos = d3.map(dataMap.get(d.id)) || d3.map();
@@ -109,7 +109,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   var displayMap = function(dta){
       data = dta.entries();
 
-      console.log('data:', data);
+      //console.log('data:', data);
 
       var deaths = function(d) {
           return d.value['Deaths'];
@@ -419,5 +419,5 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
 });
 
 function hideDetail() {
-    d3.select(".map-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
+    d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
   }

@@ -8,7 +8,7 @@
   right:0
 }
 
-.map-details {
+.country-details {
   position: absolute;
   right: 0;
   margin:1em;
@@ -21,6 +21,29 @@
   transform-style: preserve-3d;
 }
 
+.europe-details {
+  position: absolute;
+  left: 0;
+  margin:1em;
+  width:340px;
+  background:#fff;
+  border-radius:5px;
+  box-shadow:1px 2px 3px 1px rgba(151, 171, 187, 0.7);
+  float:left;
+  overflow:hidden;
+  transform-style: preserve-3d;
+}
+
+.europe-details .header{
+  border-bottom:1px solid #ebeff2;
+  padding:19px 0;
+  text-align:center;
+  color:#59687f;
+  font-size:600;
+  font-size:19px; 
+  position:relative;
+}
+
  .close-button{
   width: 22px;
   height: 22px;
@@ -30,7 +53,7 @@
   fill:#d4d9dd;
 }
 
-.map-details .header{
+.country-details .header{
   border-bottom:1px solid #ebeff2;
   padding:19px 0;
   text-align:center;
