@@ -2,7 +2,6 @@
 
 import pandas as pd
 import geopandas as gpd
-import numpy as np
 
 #Import Covid-19 cases data
 data = pd.read_csv('docs/data/covid_cases_2020-04-01.csv',sep=';')
@@ -19,7 +18,7 @@ geocoded=gpd.sjoin(countries[['id','geometry']],data,how='inner',op='intersects'
 #Final wrangling
 geocoded['Date'] = pd.to_datetime(geocoded['Date'])
 geocoded=geocoded[['Date','id','Lat','Long','Confirmed','Deaths']]
-geocoded.columns=['date','region_id','lat','lon','covid_confirmed','covid_deaths']
+geocoded.columns=['date','country_id','lat','lon','covid_confirmed','covid_deaths']
 
 #Save to CSV
 geocoded.to_csv('docs/data/geocoded_covid_cases.csv',index=False)

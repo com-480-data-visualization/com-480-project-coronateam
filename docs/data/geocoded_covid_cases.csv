@@ -1,4 +1,4 @@
-date,region_id,lat,lon,covid_confirmed,covid_deaths
+date,country_id,lat,lon,covid_confirmed,covid_deaths
 2020-01-24,AL,41.1533,20.1683,0,0
 2020-01-29,AL,41.1533,20.1683,0,0
 2020-02-11,AL,41.1533,20.1683,0,0
