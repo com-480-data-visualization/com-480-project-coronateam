@@ -86,6 +86,28 @@ We may add some 3D components to our map, similar to https://pudding.cool/2018/1
 ## Milestone 2 (Friday 1st May, 5pm)
 **10% of the final grade**
 
+### Future Goals
+- For now the right panels are not working, they always show the same graph. We need to find meaningful information to 
+display there per country. 
+
+- We want to add Google Trends data somehow. The thing is that Google Trends data are available per region similarly to
+the number of COVID-19 cases which are displayed as the country color. We will experiment different ways of representing
+those data. One idea is to add circles with numbers similarly to this ![alt-text](imgs/dot-world-map.jpg).
+
+- We are seduced by the heat map type of visualization. We want to experiment showing the Twitter data with a heat map 
+instead of simple points. 
+
+The minimal viable product would be those extensions. And we possible we would like to also implement:
+
+- Currently there is a blank left panel that we might use to display world infection data in order to better identify the context 
+especially in relation to the Chinese situation. 
+
+- Because we are dealing with a lot of precise geolocation data our visualization is currently computationally heavy and
+takes time to load. We want to aggregate some of it to reduce the loading time because we don't need a degree of precision.
+
+
+
+
 
 
 ## Milestone 3 (Thursday 28th May, 5pm)
