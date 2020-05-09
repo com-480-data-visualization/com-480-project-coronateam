@@ -27,6 +27,13 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   var currentDate = null;
   var currentCountry = null;
 
+  var centroids = new Map();
+  dataGeo.features.forEach(function(feature) {
+      centroids.set(
+          feature.id,
+          d3.geoPath().projection(projection).centroid(feature));
+  });
+
   // Initialize datasets map and filter variables
   var newDataTweets = [];
   var tweetsMap = d3.map();
@@ -149,41 +156,80 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   var colorScaleTweets = d3.scaleLinear().domain([0,10000])
     .range(["#b8b8b8", "blue"]);
 
-   // Add a scale for bubble size
+    // Add/Update circles:
+    var displayCircles = function(data) {
+        if ('lat' in data[0]) { //Twitter data
+            svg.selectAll(".circles").remove();
+            var circles = svg.selectAll(".circle")
+                .data(data.sort(function(a,b) { return +b.count - +a.count }).filter(function(d,i){ return i<1000 && centroids.has(d['alpha-3']) }));
+            circles
+                .enter()
+                .append("g")
+                .attr("class", "circles")
+                .append("circle")
+                .attr("class", "circles")
+                .attr("cx", function(d){ return projection([+d.lon, +d.lat])[0] }) //If data is tweets
+                .attr("cy", function(d){ return projection([+d.lon, +d.lat])[1] }) //If data is tweets
+                .attr("r", 1)
+                .transition().duration(80)
+                .attr("r", function(d){ return size(+d.count)})
+                .style("fill", function(d){ return "#67809f"})//colorScaleTweets(d.count) })
+                .attr("stroke", function(d){ if(d.count>100){return "black"}else{return "none"}  })
+                .attr("stroke-width", 1)
+                .attr("stroke-opacity", 0.7)
+                .attr("fill-opacity", 0.4);
+        } else { //Corona data
+            let scale = d3.scaleLog().base(2).domain([1, 1e6]).range([0, 50]);
+            svg.selectAll(".circles").remove();
+            svg.selectAll(".cases_text").remove();
+            var circles = svg.selectAll(".circle")
+                .data(data.sort(function(a,b) { return +b.count - +a.count }).filter(function(d,i){ return i<1000
+                    && centroids.has(d['alpha-3'])
+                    && d['cumsum_cases'] > 0}));
+            circles
+                .enter()
+                .append("g")
+                .attr("class", "circles")
+                .append("circle")
+                .attr("class", "circles")
+                .attr("cx", function(d){ return centroids.get(d['alpha-3'])[0] }) //If data is tweets
+                .attr("cy", function(d){ return centroids.get(d['alpha-3'])[1] }) //If data is tweets
+                .attr("r", 1)
+                .transition().duration(80)
+                .attr("r", function(d){ return scale(d['cumsum_cases']+1)})
+                .style("fill", function(d){ return "#67809f"})//colorScaleTweets(d.count) })
+                .attr("stroke", function(d){ if(d.count>100){return "black"}else{return "none"}  })
+                .attr("stroke-width", 1)
+                .attr("stroke-opacity", 0.7)
+                .attr("fill-opacity", 0.4)
+                .style("pointer-event", "none"); //TODO: Make it work
+            circles.enter()
+                .append("text")
+                .attr("class", "cases_text")
+                .attr("x", function(d){ return centroids.get(d['alpha-3'])[0] })
+                .attr("y", function(d){
+                    let r = scale(d['cumsum_cases']+1);
+                    return centroids.get(d['alpha-3'])[1] + r/4;
+                })
+                .attr("text-anchor","middle")
+                .attr("fill", "black")
+                .attr("font-size", function(d){ return d3.max(scale(d['cumsum_cases'])-5, 3) + "px"})
+                .text(function(d){ return d['cumsum_cases']});
+        }
+
+        /*circles
+          .exit()
+            .transition(d3.transition().duration(750))
+              .attr("r", 1e-6)
+            .remove();
+          */
+    };
+    // Add a scale for bubble size
   var valueExtent = d3.extent(dataTweets, function(d) { return +d.count; })
+
   var size = d3.scaleSqrt()
     .domain(valueExtent)
     .range([ 1, 50])  // Size in pixel
-
-  // Add/Update circles:
-  var displayCircles = function(data) {
-    svg.selectAll(".circles").remove();
-
-    var circles = svg.selectAll(".circle")
-          .data(data.sort(function(a,b) { return +b.count - +a.count }).filter(function(d,i){ return i<1000 }));
-    circles
-      .enter()
-        .append("g")
-          .attr("class", "circles")
-        .append("circle")
-          .attr("class", "circles")
-          .attr("cx", function(d){ return projection([+d.lon, +d.lat])[0] })
-          .attr("cy", function(d){ return projection([+d.lon, +d.lat])[1] })
-          .attr("r", 1)
-            .transition().duration(80)
-          .attr("r", function(d){ return size(+d.count)})
-        .style("fill", function(d){ return "#67809f"})//colorScaleTweets(d.count) })
-          .attr("stroke", function(d){ if(d.count>100){return "black"}else{return "none"}  })
-          .attr("stroke-width", 1)
-          .attr("stroke-opacity", 0.7)
-          .attr("fill-opacity", 0.4);
-    /*circles
-      .exit()
-        .transition(d3.transition().duration(750))
-          .attr("r", 1e-6)
-        .remove();
-      */
-  };
 
 
   ///////////////////////////////////////////
@@ -227,7 +273,8 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   function update(h) {
     updateDatasets(h);
     displayMap(dataMap);
-    displayCircles(newDataTweets);
+    //displayCircles(newDataTweets);
+    displayCircles(newDataCorona);
     if(currentCountry != null)
       displayDetail(currentCountry)
   }
