@@ -33,6 +33,13 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
           feature.id,
           d3.geoPath().projection(projection).centroid(feature));
   });
+  //Adjust France's centroid because it's off due to DOM
+  if (centroids.has("FRA")) {
+      let c_fra = centroids.get("FRA");
+      c_fra[0] += 60;
+      c_fra[1] -= 60;
+      centroids.set("FRA", c_fra);
+  }
 
   // Initialize datasets map and filter variables
   var newDataTweets = [];
@@ -84,10 +91,10 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
   // Display Infos by country
   function displayDetail(d) {
     currentCountry = d;
+    let infos = d3.map(dataMap.get(d.id)) || d3.map();
     d3.select(".country-details")
     .html(function() {
-      var location = d.properties.name;
-      var infos = d3.map(dataMap.get(d.id)) || d3.map();
+      let location = d.properties.name;
       return `
       <div class="header">${location}<li class="fas fa-times close-button" onclick="hideDetail();"></li></div>
       <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
@@ -98,7 +105,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
         <div><strong>Deaths</strong>${infos.get('Deaths') || 0  }</div>
       </div>
       `;});
-    drawChart()
+    drawChart(tweetsMap)
       /*
       return `<h4>${location}</h4>
         <p><span class="stats">Nombre total de tweets geolocalisés par semaine</span> ${tweetsMap.get(d.id) || 0}</p>
@@ -179,7 +186,10 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
                 .attr("stroke-opacity", 0.7)
                 .attr("fill-opacity", 0.4);
         } else { //Corona data
-            let scale = d3.scaleLog().base(2).domain([1, 1e6]).range([0, 50]);
+            let scale = function(d){
+                let s = d3.scaleLog().base(2).domain([1, 1e6]).range([0, 50]);
+                return s(d+1);
+            }
             svg.selectAll(".circles").remove();
             svg.selectAll(".cases_text").remove();
             var circles = svg.selectAll(".circle")
@@ -196,25 +206,35 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
                 .attr("cy", function(d){ return centroids.get(d['alpha-3'])[1] }) //If data is tweets
                 .attr("r", 1)
                 .transition().duration(80)
-                .attr("r", function(d){ return scale(d['cumsum_cases']+1)})
-                .style("fill", function(d){ return "#67809f"})//colorScaleTweets(d.count) })
-                .attr("stroke", function(d){ if(d.count>100){return "black"}else{return "none"}  })
+                .attr("r", function(d){ return scale(d['cumsum_cases'])})
+                .style("fill", function(d){ return colorScaleCorona(scale(d["cumsum_cases"])) })//return "#67809f"})
+                .attr("stroke", function(d){ if(d["cumsum_cases"]>100){return "black"}else{return "none"}  })
                 .attr("stroke-width", 1)
                 .attr("stroke-opacity", 0.7)
                 .attr("fill-opacity", 0.4)
-                .style("pointer-event", "none"); //TODO: Make it work
+                .style("pointer-events", "none");
             circles.enter()
                 .append("text")
                 .attr("class", "cases_text")
                 .attr("x", function(d){ return centroids.get(d['alpha-3'])[0] })
                 .attr("y", function(d){
-                    let r = scale(d['cumsum_cases']+1);
+                    let r = scale(d['cumsum_cases']);
                     return centroids.get(d['alpha-3'])[1] + r/4;
                 })
                 .attr("text-anchor","middle")
                 .attr("fill", "black")
-                .attr("font-size", function(d){ return d3.max(scale(d['cumsum_cases'])-5, 3) + "px"})
-                .text(function(d){ return d['cumsum_cases']});
+                //.attr("font-size", function(d){ return d3.max(scale(d['cumsum_cases'])-5, 3) + "px"})
+                .attr("font-size", function(d){
+                    let cases = d["cumsum_cases"];
+                    let val = scale(cases);
+                    if (cases > 999) { //Scale the text to not overflow when 4 numbers
+                        return val * 0.8;
+                    } else {
+                        return val;
+                    }
+                })
+                .text(function(d){ return d['cumsum_cases']})
+                .style("pointer-events", "none"); //Click through
         }
 
         /*circles

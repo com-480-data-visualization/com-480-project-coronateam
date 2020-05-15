@@ -1,4 +1,5 @@
-function drawChart(){
+function drawChart(infos){
+    console.log(infos);
     var ctx = document.getElementById('infosCountryChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
