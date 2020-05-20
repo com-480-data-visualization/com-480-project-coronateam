@@ -100,12 +100,12 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
       <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
       <canvas id="infosCountryChart"></canvas>
       <div class="stats">
-        <div><strong>Cases</strong>${infos.get('Confirmed') || 0  }</div>
+        <div><strong>Cases</strong>${infos.get('Confirmed') || 0 }</div>
         <div><strong>Recovered</strong>N/A</div>
         <div><strong>Deaths</strong>${infos.get('Deaths') || 0  }</div>
       </div>
       `;});
-    drawChart(tweetsMap)
+    drawChart(infos);
       /*
       return `<h4>${location}</h4>
         <p><span class="stats">Nombre total de tweets geolocalisés par semaine</span> ${tweetsMap.get(d.id) || 0}</p>
