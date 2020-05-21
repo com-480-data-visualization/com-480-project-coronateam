@@ -97,15 +97,16 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
       let location = d.properties.name;
       return `
       <div class="header">${location}<li class="fas fa-times close-button" onclick="hideDetail();"></li></div>
-      <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
       <canvas id="infosCountryChart"></canvas>
+      <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
       <div class="stats">
         <div><strong>Cases</strong>${infos.get('Confirmed') || 0 }</div>
         <div><strong>Recovered</strong>N/A</div>
         <div><strong>Deaths</strong>${infos.get('Deaths') || 0  }</div>
       </div>
       `;});
-    drawChart(infos);
+    console.log(parseDate(currentDate));
+    drawChart(currentCountry.id, dates, dataCorona, indexDate);
       /*
       return `<h4>${location}</h4>
         <p><span class="stats">Nombre total de tweets geolocalisés par semaine</span> ${tweetsMap.get(d.id) || 0}</p>
@@ -335,8 +336,8 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
             onChange: function (data) {
               // fired on every range slider update
               indexDate = dates.indexOf(data.from_value);
-              pause()
-              update(data.from_value)
+              pause();
+              update(data.from_value);
             },
             onFinish: function (data) {
               update(data.from_value)
