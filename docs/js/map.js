@@ -249,9 +249,7 @@ Promise.all([d3.json("data/world_countries.json"), d3.csv("data/geo_tweets_by_da
 
   // Usage
   
-
-  var parser = d3.timeParse("%d/%m/%Y");
-  var dates = getDates(new Date(2020,1,19), new Date(2020,2,11)).map(x => parser(x))
+  var dates = d3.timeDay.range(new Date('2020-02-18T00:00:00Z'), new Date('2020-03-11T00:00:00Z'))
   var indexDate = 0
 
   var $slider = $(".js-range-slider")
