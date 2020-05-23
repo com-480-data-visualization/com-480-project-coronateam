@@ -3,7 +3,7 @@
 import pandas as pd
 import geopandas as gpd
 
-#Import Covid-19 cases data
+#Import Covid-19 tweets data
 data = pd.read_csv('docs/data/geo_tweets_by_day.csv')
 
 #Import geojson file with european regions
