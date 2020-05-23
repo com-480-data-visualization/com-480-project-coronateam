@@ -35,8 +35,8 @@ function drawChart(country, dates, dataCorona, dateIndex){
         const index = dateIndex - date;
         let currentDate = dates[date];
         dataCorona.forEach(function(d) {
-            if (d.date == parseDate(currentDate) && d['alpha-3'] == country) {
-                data.unshift(d.cumsum_cases);
+            if (d.date == parseDate(currentDate) && d['country_id'] == country) {
+                data.unshift(d.covid_confirmed);
                 background.unshift(backgroundColors[1]);
                 border.unshift(borderColors[1]);
                 let x = new Date(d.date);

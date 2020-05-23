@@ -17,6 +17,9 @@ geocoded=gpd.sjoin(countries[['id','geometry']],data,how='inner',op='intersects'
 
 #Final wrangling
 geocoded['Date'] = pd.to_datetime(geocoded['Date'])
+geocoded=geocoded.groupby(by=['id','Date']).sum().reset_index()
+
+geocoded.sort_values(by=['Date'],axis=0,inplace=True)
 geocoded=geocoded[['Date','id','Lat','Long','Confirmed','Deaths']]
 geocoded.columns=['date','country_id','lat','lon','covid_confirmed','covid_deaths']
 
