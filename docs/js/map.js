@@ -20,8 +20,8 @@ var canvasLayer = d3.select("#map")
 
 // Map and projection/Zoom
 var projection = d3.geoMercator()
-    .center([10,48])
-    .scale(1800)
+    .center([5,48])
+    .scale(1200)
     .translate([ width/2, height/2 ]);
 
 //Promise.all([d3.json("data/europe_lvl2.geojson"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
@@ -44,14 +44,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
           feature.properties.id,
           feature.geometry.coordinates);
   });
-  console.log(centroids.get('FR')[0])
-  //Adjust France's centroid because it's off due to DOM
-  // if (centroids.has("FRA")) {
-  //     let c_fra = centroids.get("FRA");
-  //     c_fra[0] += 60;
-  //     c_fra[1] -= 60;
-  //     centroids.set("FRA", c_fra);
-  // }
 
   // Initialize datasets map and filter variables
   var newDataTweets = [];
@@ -59,6 +51,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
   var newDataCorona = [];
   var dataMap = d3.map();
+  var trendsMap = d3.map();
   //var dataMap = d3.cartogram();
 
   ///////////////////////////////////////////
@@ -66,19 +59,18 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   ///////////////////////////////////////////
 
   // Color scales
-  colorScaleCorona = d3.scalePow()
-    .exponent(0.5)
+  colorScaleTrends = d3.scaleLinear()
     .domain([0, 100])
-    .range(["#ececec", "red"]);
+    .range(["#ececec", "blue"]);
 
   // Draw the map
-  svg.append("g")
-    .selectAll("path")
+  var g = svg.append("g")
+  g.selectAll("path")
     .data(dataGeo.features)
     .enter()
       .append("path")
       .attr("fill", function (d) {
-      return colorScaleCorona(1);
+      return colorScaleTrends(1);
       })
       .attr("d", d3.geoPath()
           .projection(projection)
@@ -92,8 +84,9 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       }).on('mouseout', function(d) {
         d3.select(this).style('stroke', '#abb7b7');
       }).on("click", function(d) {
+        zoomOnCountry(d);
         displayDetail(d);
-      })
+        })
       .style("opacity", .6)
     .exit()
       .transition().duration(200)
@@ -103,69 +96,68 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   // Display Infos by country
   function displayDetail(d) {
     currentCountry = d;
-    let infos = d3.map(dataMap.get(d.properties.id)) || d3.map();
+    let coronaInfos = d3.map(dataMap.get(d.properties.id)) || d3.map();
+    let trendsInfos = d3.map(trendsMap.get(d.properties.id)) || d3.map();
     d3.select(".country-details")
     .html(function() {
       let location = d.properties.NUTS_NAME;
       return `
-      <div class="header">${location}<li class="fas fa-times close-button" onclick="hideDetail();"></li></div>
+      <div class="header">${location}<li id="hideButton" class="fas fa-times close-button"></li></div>
       <canvas id="infosCountryChart"></canvas>
       <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
       <div class="stats">
-        <div><strong>Cases</strong>${infos.get('Confirmed') || 0 }</div>
-        <div><strong>Recovered</strong>N/A</div>
-        <div><strong>Deaths</strong>${infos.get('Deaths') || 0  }</div>
+        <div><strong>Deaths</strong>${coronaInfos.get('Deaths') || 0  }</div>
+        <div><strong>Cases</strong>${coronaInfos.get('Confirmed') || 0 }</div>
+        <div><strong>Google Index</strong>${trendsInfos.get('trends_covid')}</div>
+        <div><strong>Tweets</strong>N/A</div>
       </div>
       `;});
-    console.log(parseDate(currentDate));
+
+    var hideButton = document.getElementById('hideButton');
+    hideButton.onclick = hideDetail;
     drawChart(currentCountry.properties.id, dates, dataCorona, indexDate);
-      /*
-      return `<h4>${location}</h4>
-        <p><span class="stats">Nombre total de tweets geolocalisés par semaine</span> ${tweetsMap.get(d.id) || 0}</p>
-        <p><span class="stats">Cas confirmés par million d'habitants</span> ${Math.round(infos.get('ConfirmedRatio') * 100) / 100 || 0  }</p>
-        <p><span class="stats">Cas confirmés cumulés</span> ${infos.get('Confirmed') || 0  }</p>
-        <p><span class="stats">Décès</span> ${infos.get('Deaths') || 0  }</p>
-        <p><span class="stats">Date</span> ${formatDateIntoDay(currentDate)}</p>
-      `;})
-      .style('opacity', 1);
-      */
     }
 
+  function hideDetail() {
+    d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
+    zoomOnCountry(false);
+  }
+
+  var centered=null;
+  function zoomOnCountry(d) {
+    var x, y, k;
+
+    if (d && centered !== d) {
+      var centroid = projection(centroids.get(d.properties.id))
+      x = centroid[0];
+      y = centroid[1];
+      k = 2;
+      centered = d;
+    } else {
+      x = width / 2;
+      y = height / 2;
+      k = 1;
+      centered = null;
+    }
+
+    g.selectAll("path")
+        .classed("active", centered && function(d) { return d === centered; });
+
+    g.transition()
+        .duration(750)
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+        .style("stroke-width", 1.5 / k + "px");
+  }
 
   // Update the map
-  var displayMap = function(dta){
-      data = dta.entries();
-
-      //console.log('data:', data);
-
-      var deaths = function(d) {
-          return d.value['covid_deaths'];
-      };
-
-      var values = data.map(deaths)
-          .sort(d3.descending),
-      lo = values[0],
-      hi = values[values.length - 1];
-
-      var scale = d3.scaleLinear()
-          .domain([lo, hi])
-          .range([1, 1.01]);
-
+  var displayMap = function(trendsMap){
     svg.selectAll("path").attr("fill", function (d) {
-      var infos = d3.map(dta.get(d.properties.id));
-      d.total = infos.get('Confirmed') || 0;
-      return colorScaleCorona(d.total);
+      var infos = d3.map(trendsMap.get(d.properties.id));
+      d.total = infos.get('trends_covid') || 0;
+      return colorScaleTrends(d.total);
     })
     .attr("d", d3.geoPath()
         .projection(projection));
-
-    //Scale the countries for cartogram
-    /*svg.selectAll('path').attr('transform', function(d) {
-       const infos = d3.map(dta.get(d.id));
-       const s = scale(infos.get('Deaths') || 1);
-       console.log('scale:', s);
-       return 'scale(' + s + ')';
-    });*/
   };
 
   ///////////////////////////////////////////
@@ -173,8 +165,10 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   ///////////////////////////////////////////
 
   // Color Scale
-  var colorScaleTweets = d3.scaleLinear().domain([0,10000])
-    .range(["#b8b8b8", "blue"]);
+  var colorScaleCorona = d3.scalePow()
+    .exponent(0.5)
+    .domain([0, 100])
+    .range(["#ececec", "red"]);
 
     // Add/Update circles:
     var displayCircles = function(data) {
@@ -220,7 +214,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
                     let cases = d["covid_confirmed"];
                     let val = scale(cases);
                     if (cases > 999) { //Scale the text to not overflow when 4 numbers
-                        return val * 0.8;
+                        return val * 0.7;
                     } else {
                         return val;
                     }
@@ -266,9 +260,11 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   ///////////////////////////////////////////
   function updateDatasets(h){
       currentDate = h;
+      const parsedDate = parseDate(h);
+
       // filter data set and draw map and bubbles
       newDataTweets = dataTweets.filter(function(d) {
-        return d.date == parseDate(h)
+        return d.date == parsedDate
 
       })
 
@@ -284,7 +280,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       //tweetsMap = d3.map(tweetsMap);
       tweetsMap = d3.cartogram(tweetsMap);
       newDataCorona = dataCorona.filter(function(d) {
-        return d.date == parseDate(h);
+        return d.date == parsedDate;
       })
 
     dataMap = {};
@@ -297,11 +293,25 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     });
 
     dataMap = d3.map(dataMap)
+
+    trendsMap = {};
+    dataTrends
+      .filter(function(d) {
+        return d.date == parsedDate;
+      })
+      .forEach(function(d){
+        trendsMap[d['country_id']] = {}
+        trendsMap[d['country_id']]['date'] = d.date;
+        trendsMap[d['country_id']]['trends_covid'] = d.trends_covid;
+      });
+    trendsMap = d3.map(trendsMap)
   }
   function update(h) {
     updateDatasets(h);
-    displayMap(dataMap);
+
+    displayMap(trendsMap);
     displayHeat(newDataTweets);
+
     displayCircles(newDataCorona);
     if(currentCountry != null)
       displayDetail(currentCountry)
@@ -355,7 +365,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
   }
 
-  var timeBetweenDays = 100
+  var timeBetweenDays = 1000
   var nextDayInterval = null
 
 
@@ -395,7 +405,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 // https://www.d3-graph-gallery.com/graph/bubble_legend.html
 // https://www.d3-graph-gallery.com/graph/bubblemap_template.html
 
-  var labels = [0.5, 1, 10, 100]
+  var labels = [0, 25, 50, 75, 100]
   var size_l = 20
   var distance_from_top = (height - 50)
   // Legend title
@@ -405,7 +415,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr("x", 20)
       .attr("y", distance_from_top - labels.length*(size_l+5) + (size_l/2))
       .attr("width", 90)
-      .html("Cas confirmés/Mi d'habitants")
+      .html("Google Index")
       .style("font-size", 12)
 
   // Add one dot in the legend for each name.
@@ -418,7 +428,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr("y", function(d,i){ return distance_from_top - i*(size_l+5)}) // 100 is where the first dot appears. 25 is the distance between dots
       .attr("width", size_l)
       .attr("height", size_l)
-      .style("fill", function(d){ return colorScaleCorona(d)})
+      .style("fill", function(d){ return colorScaleTrends(d)})
 
   // Add one dot in the legend for each name.
   svg.selectAll("mylabels")
@@ -427,7 +437,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     .append("text")
       .attr("x", 20 + size_l*1.2)
       .attr("y", function(d,i){ return distance_from_top - i*(size_l+5) + (size_l/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-      .style("fill", function(d){ return colorScaleCorona(d)})
+      .style("fill", function(d){ return colorScaleTrends(d)})
       .text(function(d){ return d})
       .attr("text-anchor", "left")
       .style("alignment-baseline", "middle")
@@ -474,6 +484,4 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr('text-anchor', 'end')
 });
 
-function hideDetail() {
-    d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
-  }
+

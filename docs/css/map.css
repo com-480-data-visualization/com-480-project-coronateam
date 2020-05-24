@@ -113,11 +113,11 @@
 }
 .stats div{
   border-right:1px solid #ebeff2;
-  width:119px;
+  width:90px;
   float:left;
   text-align:center
 }
-.stats div:nth-of-type(3){border:none;}
+.stats div:nth-of-type(4){border:none;}
 
 
 svg.icon {
