@@ -55,8 +55,8 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     .range(["#ececec", "blue"]);
 
   // Draw the map
-  svg.append("g")
-    .selectAll("path")
+  var g = svg.append("g")
+  g.selectAll("path")
     .data(dataGeo.features)
     .enter()
       .append("path")
@@ -75,8 +75,9 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       }).on('mouseout', function(d) {
         d3.select(this).style('stroke', '#abb7b7');
       }).on("click", function(d) {
+        zoomOnCountry(d);
         displayDetail(d);
-      })
+        })
       .style("opacity", .6)
     .exit()
       .transition().duration(200)
@@ -92,7 +93,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     .html(function() {
       let location = d.properties.NUTS_NAME;
       return `
-      <div class="header">${location}<li class="fas fa-times close-button" onclick="hideDetail();"></li></div>
+      <div class="header">${location}<li id="hideButton" class="fas fa-times close-button"></li></div>
       <canvas id="infosCountryChart"></canvas>
       <div class="dates"><div><strong>Date</strong>${formatDateIntoDay(currentDate)}</div></div>
       <div class="stats">
@@ -103,9 +104,41 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       </div>
       `;});
 
+    var hideButton = document.getElementById('hideButton');
+    hideButton.onclick = hideDetail;
     drawChart(currentCountry.properties.id, dates, dataCorona, indexDate);
     }
 
+  function hideDetail() {
+    d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
+    zoomOnCountry(false);
+  }
+
+  var centered=null;
+  function zoomOnCountry(d) {
+    var x, y, k;
+
+    if (d && centered !== d) {
+      var centroid = projection(centroids.get(d.properties.id))
+      x = centroid[0];
+      y = centroid[1];
+      k = 2;
+      centered = d;
+    } else {
+      x = width / 2;
+      y = height / 2;
+      k = 1;
+      centered = null;
+    }
+
+    g.selectAll("path")
+        .classed("active", centered && function(d) { return d === centered; });
+
+    g.transition()
+        .duration(750)
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+        .style("stroke-width", 1.5 / k + "px");
+  }
 
   // Update the map
   var displayMap = function(trendsMap){
@@ -422,6 +455,4 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr('text-anchor', 'end')
 });
 
-function hideDetail() {
-    d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
-  }
+
