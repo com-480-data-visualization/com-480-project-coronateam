@@ -12,6 +12,7 @@ var width = window.innerWidth,
 // Heatmap
 var canvasLayer = d3.select("#map")
   .append("canvas")
+  .attr("viewBox", "0 0 " + width + " "+ height)
   .attr("id","heatmap")
   .attr("width",width)
   .attr("height",height)
@@ -253,9 +254,9 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     var heat = simpleheat(canvas);
 
     data.forEach(d => {d.coords=projection([d.lon, d.lat]); })
-    heat.data(data.map(d => { console.log(d); return [d.coords[0], d.coords[1], +d.covid_tweets]}));
+    heat.data(data.map(d => { console.log(d); return [d.coords[0], d.coords[1]-50, +d.covid_tweets]}));
     heat.radius(15, 15);
-    heat.max(d3.max(newDataTweets, d => +d.covid_tweets));
+    heat.max(d3.max(data, d => +d.covid_tweets));
     heat.draw(0.05);
   }
 
