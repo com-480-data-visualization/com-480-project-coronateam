@@ -9,6 +9,14 @@ var width = window.innerWidth,
    .attr("width", width)
    .attr("height", height);
 
+// Heatmap
+var canvasLayer = d3.select("#map")
+  .append("canvas")
+  .attr("id","heatmap")
+  .attr("width",width)
+  .attr("height",height)
+
+
 // Map and projection/Zoom
 var projection = d3.geoMercator()
     .center([10,48])
@@ -235,6 +243,24 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
 
   ///////////////////////////////////////////
+  /////////////////HEATMAP//////////////////
+  ///////////////////////////////////////////
+
+  var displayHeat = function(data){
+    var canvas = canvasLayer.node(),
+      context = canvas.getContext("2d");
+
+    var heat = simpleheat(canvas);
+
+    data.forEach(d => {d.coords=projection([d.lon, d.lat]); })
+    heat.data(data.map(d => { console.log(d); return [d.coords[0], d.coords[1], +d.covid_tweets]}));
+    heat.radius(15, 15);
+    heat.max(d3.max(newDataTweets, d => +d.covid_tweets));
+    heat.draw(0.05);
+  }
+
+
+  ///////////////////////////////////////////
   /////////////////SELECTOR//////////////////
   ///////////////////////////////////////////
   function updateDatasets(h){
@@ -274,7 +300,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   function update(h) {
     updateDatasets(h);
     displayMap(dataMap);
-    //displayCircles(newDataTweets);
+    displayHeat(newDataTweets);
     displayCircles(newDataCorona);
     if(currentCountry != null)
       displayDetail(currentCountry)
