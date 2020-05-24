@@ -25,12 +25,14 @@ var projection = d3.geoMercator()
     .translate([ width/2, height/2 ]);
 
 //Promise.all([d3.json("data/europe_lvl2.geojson"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
-Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson")]).then(function(data) {
+Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv")]).then(function(data) {
   var dataGeo = data[0];
   var dataTweets = data[1];
   var dataCorona = data[2];
   var dataTrends = data[3];
   var dataCentroids = data[4];
+  var dataGeoRegions = data[5];
+  var dataTrendsRegions = data[6];
 
   var formatDateIntoDay = d3.timeFormat("%B %d, %Y");
   var parseDate = d3.timeFormat("%Y-%m-%d");
@@ -85,6 +87,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         d3.select(this).style('stroke', '#abb7b7');
       }).on("click", function(d) {
         zoomOnCountry(d);
+        update(null);
         displayDetail(d);
         })
       .style("opacity", .6)
@@ -133,11 +136,36 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       y = centroid[1];
       k = 2;
       centered = d;
+      g.selectAll(".path_regions").remove()
+      g.selectAll(".path_regions")
+        .data(dataGeoRegions.features.filter(function(feature){ return feature.properties.CNTR_CODE == d.properties.id}))
+        .enter()
+          .append("path")
+          .attr("class", "path_regions")
+          .attr("fill", function (d) {
+          return colorScaleTrends(1);
+          })
+          .attr("d", d3.geoPath()
+              .projection(projection)
+          )
+          .style("stroke", "#abb7b7")
+          .style("stroke-width", "1px")
+          .on('mouseover', function(d) {
+            d3.select(this).style('stroke', 'black');
+            d3.event.preventDefault();
+            //displayDetail(d);
+          }).on('mouseout', function(d) {
+            d3.select(this).style('stroke', '#abb7b7');
+          })
+          .style("opacity", .6);
+
     } else {
       x = width / 2;
       y = height / 2;
       k = 1;
       centered = null;
+
+
     }
 
     g.selectAll("path")
@@ -147,17 +175,34 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .duration(750)
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
         .style("stroke-width", 1.5 / k + "px");
+
+    displayMap(trendsMap, trendsMapRegions)
   }
 
   // Update the map
-  var displayMap = function(trendsMap){
-    svg.selectAll("path").attr("fill", function (d) {
+  var displayMap = function(trendsMap, trendsMapRegions){
+    if (!centered){
+      svg.selectAll("path").attr("fill", function (d) {
       var infos = d3.map(trendsMap.get(d.properties.id));
       d.total = infos.get('trends_covid') || 0;
       return colorScaleTrends(d.total);
     })
     .attr("d", d3.geoPath()
         .projection(projection));
+
+    } else {
+      if(trendsMapRegions){
+        g.selectAll(".path_regions").attr("fill", function (d) {
+          var infos = d3.map(trendsMapRegions.get(d.properties.id));
+          d.total = infos.get('trends_covid') || 0;
+          
+          return colorScaleTrends(d.total);
+        })
+        .attr("d", d3.geoPath()
+            .projection(projection));
+
+      }
+    }
   };
 
   ///////////////////////////////////////////
@@ -178,6 +223,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
             }
             svg.selectAll(".circles").remove();
             svg.selectAll(".cases_text").remove();
+
             var circles = svg.selectAll(".circle")
                 .data(data.sort(function(a,b) { return +b.count - +a.count }).filter(function(d,i){ return i<1000
                     && centroids.has(d['country_id'])
@@ -199,6 +245,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
                 .attr("stroke-opacity", 0.7)
                 .attr("fill-opacity", 0.4)
                 .style("pointer-events", "none");
+
             circles.enter()
                 .append("text")
                 .attr("class", "cases_text")
@@ -248,7 +295,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     var heat = simpleheat(canvas);
 
     data.forEach(d => {d.coords=projection([d.lon, d.lat]); })
-    heat.data(data.map(d => { console.log(d); return [d.coords[0], d.coords[1]-50, +d.covid_tweets]}));
+    heat.data(data.map(d => { return [d.coords[0], d.coords[1]-50, +d.covid_tweets]}));
     heat.radius(15, 15);
     heat.max(d3.max(data, d => +d.covid_tweets));
     heat.draw(0.05);
@@ -305,11 +352,26 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         trendsMap[d['country_id']]['trends_covid'] = d.trends_covid;
       });
     trendsMap = d3.map(trendsMap)
+
+
+    trendsMapRegions = {};
+    dataTrendsRegions
+      .filter(function(d) {
+        return (d.date == parsedDate && centered && d.region_id.includes(centered.properties.id));
+      })
+      .forEach(function(d){
+        trendsMapRegions[d['region_id']] = {}
+        trendsMapRegions[d['region_id']]['date'] = d.date;
+        trendsMapRegions[d['region_id']]['trends_covid'] = d.trends_covid;
+      });
+    trendsMapRegions = d3.map(trendsMapRegions)
   }
   function update(h) {
-    updateDatasets(h);
+    if(!h && currentDate)
+      h = currentDate
 
-    displayMap(trendsMap);
+    updateDatasets(h);
+    displayMap(trendsMap, trendsMapRegions);
     displayHeat(newDataTweets);
 
     displayCircles(newDataCorona);
@@ -349,7 +411,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
   function nextDay(){
     indexDate += 1;
-    console.log(indexDate)
     if(indexDate < dates.length){
       var slider_instance = $slider.data("ionRangeSlider");
         slider_instance.update({
