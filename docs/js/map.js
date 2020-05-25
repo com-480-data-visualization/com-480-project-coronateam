@@ -47,6 +47,8 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
           feature.geometry.coordinates);
   });
 
+  
+
   // Initialize datasets map and filter variables
   var newDataTweets = [];
   var tweetsMap = d3.map();
@@ -126,6 +128,15 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     zoomOnCountry(false);
   }
 
+
+  var zoom = d3.zoom().on("zoom", zoomed);
+
+  function zoomed() {
+    g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+    // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
+    g.attr("transform", d3.event.transform); // updated for d3 v4
+  }
+
   var centered=null;
   function zoomOnCountry(d) {
     var x, y, k;
@@ -168,6 +179,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
     }
 
+    /*
     g.selectAll("path")
         .classed("active", centered && function(d) { return d === centered; });
 
@@ -175,6 +187,10 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .duration(750)
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
         .style("stroke-width", 1.5 / k + "px");
+   
+    */
+
+    var currTranslate = projection.scale(k*1200).translate([-x, -y]);
 
     displayMap(trendsMap, trendsMapRegions)
   }
