@@ -25,7 +25,7 @@ var projection = d3.geoMercator()
     .translate([ width/2, height/2 ]);
 
 //Promise.all([d3.json("data/europe_lvl2.geojson"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
-Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv")]).then(function(data) {
+Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv"), d3.csv("data/covariates_by_country.csv")]).then(function(data) {
   var dataGeo = data[0];
   var dataTweets = data[1];
   var dataCorona = data[2];
@@ -33,6 +33,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var dataCentroids = data[4];
   var dataGeoRegions = data[5];
   var dataTrendsRegions = data[6];
+  //var dataCorrelation = data[7];
 
   var formatDateIntoDay = d3.timeFormat("%B %d, %Y");
   var parseDate = d3.timeFormat("%Y-%m-%d");
@@ -54,6 +55,113 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var dataMap = d3.map();
   var trendsMap = d3.map();
   //var dataMap = d3.cartogram();
+
+
+  ///////////////////////////////////////////
+  /////////////////SOLAR/////////////////////
+  ///////////////////////////////////////////
+
+  //Convert to angular coordinates
+  var reMap = function(oldValue) {
+    var oldMin = 0,
+        oldMax = -359,
+        newMin = 0,
+        newMax = (Math.PI * 2),
+        newValue = (((oldValue - 90 - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
+
+    return newValue;
+  }
+
+  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
+  // second is ring (range 0 to 1), aka Radial Coordinate.
+  // third is node size radius (center to edge)
+  var dataCorrelation = [
+  [reMap(25), 1, 20, 'label 1'],
+  [reMap(105), 0.8, 10, 'label 2'],
+  [reMap(266), 1, 8, 'label 3'],
+  [reMap(8), 0.2, 22, 'label 4'],
+  [reMap(189), 1, 28, 'label 5'],
+  [reMap(350), 0.6, 15, 'label 6'],
+  [reMap(119), 0.4, 24, 'label 7'],
+  [reMap(305), 0.8, 31, 'label 8']
+];
+
+var widthSolar = document.getElementById('solar').offsetWidth,
+  heightSolar = document.getElementById('solar').offsetHeight;
+var radius = Math.min(widthSolar, heightSolar) / 2 - 30; // radius of the whole chart
+
+var r = d3.scaleLinear()
+  .domain([0, 1])
+  .range([0, radius]);
+
+var solar = d3.select('#solar')
+  .append('svg')
+  //.call('zoom')
+  .attr('width', widthSolar)
+  .attr('height', heightSolar)
+  .append('g')
+  .attr('transform', 'translate(' + widthSolar / 2 + ',' + heightSolar / 2 + ')');
+
+var gr = solar.append('g')
+  .attr('class', 'r axis')
+  .selectAll('g')
+  .data(r.ticks(5).slice(1))
+  .enter().append('g');
+
+gr.append('circle')
+  .attr('r', r)
+
+var ga = solar.append('g')
+  .attr('class', 'a axis')
+  .selectAll('g')
+  .data(d3.range(0, 360, 30)) // line density
+  .enter().append('g')
+  .attr('transform', function(d) {
+    return 'rotate(' + -d + ')';
+  });
+
+ga.append('line')
+  .attr('x2', radius);
+
+var line = d3.radialLine()
+  .radius(function(d) {
+    return r(d[1]);
+  })
+  .angle(function(d) {
+    return -d[0] + Math.PI / 2;
+  });
+
+
+solar.selectAll('point')
+  .data(dataCorrelation)
+  .enter()
+  .append('circle')
+  .attr('class', 'point')
+  .attr('transform', function(d) {
+    //console.log(d);
+
+    var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
+    return 'translate(' + coors + ')'
+  })
+  .attr('r', function(d) {
+    return 10;
+  })
+  .attr('fill',function(d,i){
+    return "pink";
+  });
+
+solar.selectAll('point')
+  .data(dataCorrelation)
+  .enter().append("text")
+      .attr('transform', function(d) {
+    //console.log(d);
+
+    var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
+    return 'translate(' + coors + ')'
+  })
+      .text(function(d) {
+        return d[3];
+      });
 
   ///////////////////////////////////////////
   ////////////////////MAP////////////////////
