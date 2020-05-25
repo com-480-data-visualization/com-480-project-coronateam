@@ -17,8 +17,6 @@ var canvasLayer = d3.select("#heatmap")
   .attr("height",height)
 var canvas=canvasLayer.node(),
   ctx=canvas.getContext("2d");
-//ctx.globalCompositeOperation = 'multiply';
-//ctx.globalCompositeOperation = "destination-over";
 
 // Map and projection/Zoom
 var projection = d3.geoMercator()
@@ -314,20 +312,20 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
       })
 
-      // tweetsMap = {};
-      // newDataTweets.forEach(function(d){
-      //   if (d['country_id'] in tweetsMap){
-      //     tweetsMap[d['country_id']] = parseInt(tweetsMap[d['country_id']]) + parseInt(d.count);
-      //   }
-      //   else{
-      //     tweetsMap[d['country_id']] = parseInt(d.count);
-      //   }
-      // });
-      // //tweetsMap = d3.map(tweetsMap);
-      // tweetsMap = d3.cartogram(tweetsMap);
-      // newDataCorona = dataCorona.filter(function(d) {
-      //   return d.date == parsedDate;
-      // })
+      tweetsMap = {};
+      newDataTweets.forEach(function(d){
+        if (d['country_id'] in tweetsMap){
+          tweetsMap[d['country_id']] = parseInt(tweetsMap[d['country_id']]) + parseInt(d.count);
+        }
+        else{
+          tweetsMap[d['country_id']] = parseInt(d.count);
+        }
+      });
+      //tweetsMap = d3.map(tweetsMap);
+      tweetsMap = d3.cartogram(tweetsMap);
+      newDataCorona = dataCorona.filter(function(d) {
+        return d.date == parsedDate;
+      })
 
     dataMap = {};
     newDataCorona.forEach(function(d){
@@ -372,7 +370,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     updateDatasets(h);
     displayMap(trendsMap, trendsMapRegions);
     displayHeat(newDataTweets);
-
     displayCircles(newDataCorona);
     if(currentCountry != null)
       displayDetail(currentCountry)
