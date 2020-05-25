@@ -70,8 +70,12 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   colorScaleTrends = d3.scaleLinear()
     .domain([0, 100])
     .range(["#ececec", "#0868ac"]);
-
-
+/*
+  colorScaleTrends = d3.scalePow()
+    .exponent(0.5)
+    .domain([0, 100])
+    .range(["#ececec", "#0868ac"]);
+*/
   // Draw the map
   var g = svg.append("g")
   g.selectAll("path")
@@ -200,6 +204,10 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .projection(projection));
 
     } else {
+      svg.selectAll("path").attr("fill", colorScaleTrends(0))
+          .attr("d", d3.geoPath()
+          .projection(projection));
+
       if(trendsMapRegions){
         g.selectAll(".path_regions").attr("fill", function (d) {
           var infos = d3.map(trendsMapRegions.get(d.properties.id));
