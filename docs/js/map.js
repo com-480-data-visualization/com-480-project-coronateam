@@ -69,7 +69,8 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   // Color scales
   colorScaleTrends = d3.scaleLinear()
     .domain([0, 100])
-    .range(["#ececec", "blue"]);
+    .range(["#ececec", "#0868ac"]);
+
 
   // Draw the map
   var g = svg.append("g")
@@ -128,6 +129,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     }
 
   function hideDetail() {
+    currentCountry = null
     d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
     zoomOnCountry(false);
   }
@@ -177,7 +179,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       
     }
     canvasLayer.style("visibility", "hidden");
-    
+
     svg.transition()
         .duration(750)
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
@@ -219,13 +221,13 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   // Color Scale
   var colorScaleCorona = d3.scalePow()
     .exponent(0.5)
-    .domain([0, 100])
-    .range(["#ececec", "red"]);
+    .domain([0, 15000])
+    .range([10, 50]);
 
     // Add/Update circles:
     var displayCircles = function(data) {
             let scale = function(d){
-                let s = d3.scaleLog().base(2).domain([1, 1e6]).range([0, 50]);
+                let s = d3.scaleLog().base(20).domain([1, 15000]).range([2, 50]);
                 return s(d+1);
             }
             svg.selectAll(".circles").remove();
@@ -245,26 +247,30 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
                 .attr("cy", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] }) //If data is tweets
                 .attr("r", 1)
                 .transition().duration(80)
-                .attr("r", function(d){ return scale(d['covid_confirmed'])})
-                .style("fill", function(d){ return colorScaleCorona(scale(d["covid_confirmed"])) })//return "#67809f"})
-                .attr("stroke", function(d){ if(d["covid_confirmed"]>100){return "black"}else{return "none"}  })
-                .attr("stroke-width", 1)
-                .attr("stroke-opacity", 0.7)
-                .attr("fill-opacity", 0.4)
+                .attr("r", function(d){ return colorScaleCorona(d['covid_confirmed'])})
+                .style("fill", "#f64747")//function(d){ return colorScaleCorona(scale(d["covid_confirmed"])) })//return "#67809f"})
+                .attr("stroke", "white")//function(d){ if(d["covid_confirmed"]>100){return "black"}else{return "none"}  })
+                .attr("stroke-width", 0.5)
+                .attr("stroke-opacity", 0.5)
+                .attr("fill-opacity", 0.7)
                 .style("pointer-events", "none");
 
-            circles.enter()
+            circles
+                .enter()
                 .append("text")
                 .attr("class", "cases_text")
+                .attr("text-anchor","middle")
+                .attr("alignment-baseline", "central")
                 .attr("x", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] })
                 .attr("y", function(d){
-                    let r = scale(d['covid_confirmed']);
-                    return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] + r/4;
+                    let r = colorScaleCorona(d['covid_confirmed']);
+                    return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] ;
                 })
-                .attr("text-anchor","middle")
-                .attr("fill", "black")
+                
+                .attr("fill", "white")
                 //.attr("font-size", function(d){ return d3.max(scale(d['covid_confirmed'])-5, 3) + "px"})
-                .attr("font-size", function(d){
+                .attr("font-size", 14)
+                  /*function(d){
                     let cases = d["covid_confirmed"];
                     let val = scale(cases);
                     if (cases > 999) { //Scale the text to not overflow when 4 numbers
@@ -272,7 +278,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
                     } else {
                         return val;
                     }
-                })
+                })*/
                 .text(function(d){ return d['covid_confirmed']})
                 .style("pointer-events", "none"); //Click through
 
@@ -301,9 +307,9 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     var heat = simpleheat(canvas);
     data.forEach(d => {d.coords=projectionCanvas([d.lon, d.lat]); })
     heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
-    heat.radius(15, 15);
+    heat.radius(10, 10);
     heat.max(d3.max(data, d => +d.covid_tweets));
-    heat.draw(0.1);
+    heat.draw(0.05);
   }
 
 
