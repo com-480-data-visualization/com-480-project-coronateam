@@ -24,6 +24,11 @@ var projection = d3.geoMercator()
     .scale(1200)
     .translate([ width/2, height/2 ]);
 
+var projectionCanvas = d3.geoMercator()
+    .center([5,48])
+    .scale(1200)
+    .translate([ width/2, height/2 ]);
+
 //Promise.all([d3.json("data/europe_lvl2.geojson"), d3.csv("data/geo_tweets_by_week.csv"), d3.csv("data/coronavirus_2020-03-18.csv")]).then(function(data) {
 Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv"), d3.csv("data/covariates_by_country.csv")]).then(function(data) {
   var dataGeo = data[0];
@@ -47,6 +52,8 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
           feature.properties.id,
           feature.geometry.coordinates);
   });
+
+  
 
   // Initialize datasets map and filter variables
   var newDataTweets = [];
@@ -170,8 +177,13 @@ solar.selectAll('point')
   // Color scales
   colorScaleTrends = d3.scaleLinear()
     .domain([0, 100])
-    .range(["#ececec", "blue"]);
-
+    .range(["#ececec", "#0868ac"]);
+/*
+  colorScaleTrends = d3.scalePow()
+    .exponent(0.5)
+    .domain([0, 100])
+    .range(["#ececec", "#0868ac"]);
+*/
   // Draw the map
   var g = svg.append("g")
   g.selectAll("path")
@@ -229,21 +241,24 @@ solar.selectAll('point')
     }
 
   function hideDetail() {
+    currentCountry = null
     d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
     zoomOnCountry(false);
   }
 
+
   var centered=null;
   function zoomOnCountry(d) {
     var x, y, k;
-
+    g.selectAll(".path_regions").remove()
     if (d && centered !== d) {
       var centroid = projection(centroids.get(d.properties.id))
       x = centroid[0];
       y = centroid[1];
       k = 2;
+      ctx_k = 2;
       centered = d;
-      g.selectAll(".path_regions").remove()
+      
       g.selectAll(".path_regions")
         .data(dataGeoRegions.features.filter(function(feature){ return feature.properties.CNTR_CODE == d.properties.id}))
         .enter()
@@ -257,33 +272,32 @@ solar.selectAll('point')
           )
           .style("stroke", "#abb7b7")
           .style("stroke-width", "1px")
-          .on('mouseover', function(d) {
-            d3.select(this).style('stroke', 'black');
-            d3.event.preventDefault();
-            //displayDetail(d);
-          }).on('mouseout', function(d) {
-            d3.select(this).style('stroke', '#abb7b7');
-          })
           .style("opacity", .6);
+
+      
+      projectionCanvas.center(centroids.get(d.properties.id)); 
+      projectionCanvas.scale(k*1200); 
+      
 
     } else {
       x = width / 2;
       y = height / 2;
+      ctx_k = 0.5;
       k = 1;
       centered = null;
-
-
+      
+      projectionCanvas.center(projection.center()); 
+      projectionCanvas.scale(projection.scale()); 
+      
     }
+    canvasLayer.style("visibility", "hidden");
 
-    g.selectAll("path")
-        .classed("active", centered && function(d) { return d === centered; });
-
-    g.transition()
+    svg.transition()
         .duration(750)
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-        .style("stroke-width", 1.5 / k + "px");
+        .style("stroke-width", 1.5 / k + "px").on('end',  function(d){canvasLayer.style("visibility", "visible")});
 
-    displayMap(trendsMap, trendsMapRegions)
+    update(currentDate);
   }
 
   // Update the map
@@ -298,6 +312,10 @@ solar.selectAll('point')
         .projection(projection));
 
     } else {
+      svg.selectAll("path").attr("fill", colorScaleTrends(0))
+          .attr("d", d3.geoPath()
+          .projection(projection));
+
       if(trendsMapRegions){
         g.selectAll(".path_regions").attr("fill", function (d) {
           var infos = d3.map(trendsMapRegions.get(d.properties.id));
@@ -319,13 +337,13 @@ solar.selectAll('point')
   // Color Scale
   var colorScaleCorona = d3.scalePow()
     .exponent(0.5)
-    .domain([0, 100])
-    .range(["#ececec", "red"]);
+    .domain([0, 15000])
+    .range([10, 50]);
 
     // Add/Update circles:
     var displayCircles = function(data) {
             let scale = function(d){
-                let s = d3.scaleLog().base(2).domain([1, 1e6]).range([0, 50]);
+                let s = d3.scaleLog().base(20).domain([1, 15000]).range([2, 50]);
                 return s(d+1);
             }
             svg.selectAll(".circles").remove();
@@ -345,26 +363,30 @@ solar.selectAll('point')
                 .attr("cy", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] }) //If data is tweets
                 .attr("r", 1)
                 .transition().duration(80)
-                .attr("r", function(d){ return scale(d['covid_confirmed'])})
-                .style("fill", function(d){ return colorScaleCorona(scale(d["covid_confirmed"])) })//return "#67809f"})
-                .attr("stroke", function(d){ if(d["covid_confirmed"]>100){return "black"}else{return "none"}  })
-                .attr("stroke-width", 1)
-                .attr("stroke-opacity", 0.7)
-                .attr("fill-opacity", 0.4)
+                .attr("r", function(d){ return colorScaleCorona(d['covid_confirmed'])})
+                .style("fill", "#f64747")//function(d){ return colorScaleCorona(scale(d["covid_confirmed"])) })//return "#67809f"})
+                .attr("stroke", "white")//function(d){ if(d["covid_confirmed"]>100){return "black"}else{return "none"}  })
+                .attr("stroke-width", 0.5)
+                .attr("stroke-opacity", 0.5)
+                .attr("fill-opacity", 0.7)
                 .style("pointer-events", "none");
 
-            circles.enter()
+            circles
+                .enter()
                 .append("text")
                 .attr("class", "cases_text")
+                .attr("text-anchor","middle")
+                .attr("alignment-baseline", "central")
                 .attr("x", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] })
                 .attr("y", function(d){
-                    let r = scale(d['covid_confirmed']);
-                    return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] + r/4;
+                    let r = colorScaleCorona(d['covid_confirmed']);
+                    return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] ;
                 })
-                .attr("text-anchor","middle")
-                .attr("fill", "black")
+                
+                .attr("fill", "white")
                 //.attr("font-size", function(d){ return d3.max(scale(d['covid_confirmed'])-5, 3) + "px"})
-                .attr("font-size", function(d){
+                .attr("font-size", 14)
+                  /*function(d){
                     let cases = d["covid_confirmed"];
                     let val = scale(cases);
                     if (cases > 999) { //Scale the text to not overflow when 4 numbers
@@ -372,7 +394,7 @@ solar.selectAll('point')
                     } else {
                         return val;
                     }
-                })
+                })*/
                 .text(function(d){ return d['covid_confirmed']})
                 .style("pointer-events", "none"); //Click through
 
@@ -399,11 +421,11 @@ solar.selectAll('point')
     // var canvas = canvasLayer.node(),
     //   context = canvas.getContext("2d");
     var heat = simpleheat(canvas);
-    data.forEach(d => {d.coords=projection([d.lon, d.lat]); })
+    data.forEach(d => {d.coords=projectionCanvas([d.lon, d.lat]); })
     heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
-    heat.radius(15, 15);
+    heat.radius(10, 10);
     heat.max(d3.max(data, d => +d.covid_tweets));
-    heat.draw(0.1);
+    heat.draw(0.05);
   }
 
 
