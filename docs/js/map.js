@@ -10,13 +10,15 @@ var width = window.innerWidth,
    .attr("height", height);
 
 // Heatmap
-var canvasLayer = d3.select("#map")
+var canvasLayer = d3.select("#heatmap")
   .append("canvas")
-  .attr("viewBox", "0 0 " + width + " "+ height)
-  .attr("id","heatmap")
+  //.attr("id","heatmap")
   .attr("width",width)
   .attr("height",height)
-
+var canvas=canvasLayer.node(),
+  ctx=canvas.getContext("2d");
+//ctx.globalCompositeOperation = 'multiply';
+//ctx.globalCompositeOperation = "destination-over";
 
 // Map and projection/Zoom
 var projection = d3.geoMercator()
@@ -49,8 +51,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
   // Initialize datasets map and filter variables
   var newDataTweets = [];
-  var tweetsMap = d3.map();
-
+  //var tweetsMap = d3.map();
   var newDataCorona = [];
   var dataMap = d3.map();
   var trendsMap = d3.map();
@@ -195,7 +196,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         g.selectAll(".path_regions").attr("fill", function (d) {
           var infos = d3.map(trendsMapRegions.get(d.properties.id));
           d.total = infos.get('trends_covid') || 0;
-          
+
           return colorScaleTrends(d.total);
         })
         .attr("d", d3.geoPath()
@@ -289,16 +290,14 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   ///////////////////////////////////////////
 
   var displayHeat = function(data){
-    var canvas = canvasLayer.node(),
-      context = canvas.getContext("2d");
-
+    // var canvas = canvasLayer.node(),
+    //   context = canvas.getContext("2d");
     var heat = simpleheat(canvas);
-
     data.forEach(d => {d.coords=projection([d.lon, d.lat]); })
-    heat.data(data.map(d => { return [d.coords[0], d.coords[1]-50, +d.covid_tweets]}));
+    heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
     heat.radius(15, 15);
     heat.max(d3.max(data, d => +d.covid_tweets));
-    heat.draw(0.05);
+    heat.draw(0.1);
   }
 
 
@@ -315,20 +314,20 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
       })
 
-      tweetsMap = {};
-      newDataTweets.forEach(function(d){
-        if (d['country_id'] in tweetsMap){
-          tweetsMap[d['country_id']] = parseInt(tweetsMap[d['country_id']]) + parseInt(d.count);
-        }
-        else{
-          tweetsMap[d['country_id']] = parseInt(d.count);
-        }
-      });
-      //tweetsMap = d3.map(tweetsMap);
-      tweetsMap = d3.cartogram(tweetsMap);
-      newDataCorona = dataCorona.filter(function(d) {
-        return d.date == parsedDate;
-      })
+      // tweetsMap = {};
+      // newDataTweets.forEach(function(d){
+      //   if (d['country_id'] in tweetsMap){
+      //     tweetsMap[d['country_id']] = parseInt(tweetsMap[d['country_id']]) + parseInt(d.count);
+      //   }
+      //   else{
+      //     tweetsMap[d['country_id']] = parseInt(d.count);
+      //   }
+      // });
+      // //tweetsMap = d3.map(tweetsMap);
+      // tweetsMap = d3.cartogram(tweetsMap);
+      // newDataCorona = dataCorona.filter(function(d) {
+      //   return d.date == parsedDate;
+      // })
 
     dataMap = {};
     newDataCorona.forEach(function(d){
@@ -544,5 +543,3 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr('alignment-baseline', 'middle')
       .attr('text-anchor', 'end')
 });
-
-

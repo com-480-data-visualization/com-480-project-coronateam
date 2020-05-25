@@ -1,10 +1,20 @@
 /*  MAP Style */
+
 #map svg{
   width: 100%;
-  position:fixed; 
-  top:0; 
-  bottom:0; 
-  left:0; 
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0
+}
+
+#heatmap canvas{
+  width: 100%;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
   right:0
 }
 
@@ -40,7 +50,7 @@
   text-align:center;
   color:#59687f;
   font-size:600;
-  font-size:19px; 
+  font-size:19px;
   position:relative;
 }
 
@@ -59,7 +69,7 @@
   text-align:center;
   color:#59687f;
   font-size:600;
-  font-size:19px; 
+  font-size:19px;
   position:relative;
 }
 
@@ -70,7 +80,7 @@
   margin:20px 20px 0;
   font-size:16px;
   color:#5aadef;
-  font-weight:600;  
+  font-weight:600;
   overflow:auto;
 }
 
@@ -91,7 +101,7 @@
   width:1px;
   height:40px;
   position:relative;
-  align-content: center; 
+  align-content: center;
   background:#ebeff2;
 }
 
@@ -107,7 +117,7 @@
   padding:15px 0;
   font-size:16px;
   color:#59687f;
-  font-weight:600;  
+  font-weight:600;
     margin-top: 36px;
   border-radius: 0 0 5px 5px;
 }
