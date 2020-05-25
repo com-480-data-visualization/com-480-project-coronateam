@@ -35,23 +35,31 @@ pop.to_csv('docs/data/pop_toreshape.csv',index=False)
 #reshape with reshape_demographics.R
 pop=pd.read_csv('docs/data/demography_by_country.csv')
 
+#Only keep %female
+pop.drop(['male'],axis=1,inplace=True)
+
 
 ## GDP by country
 
 #Country codes
 #https://geotargetly.com/geo-data/country-codes
 iso = pd.read_csv('docs/data/iso_3166_country_codes.csv',encoding='iso-8859-1',header=None, names=['country','code2','code3','null'])
+iso.loc[iso['code2']=='GR','code2']='EL'
+iso.loc[iso['code2']=='GB','code2']='UK'
+
 
 #GDP by country
 #https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?view=map
 gdp = pd.read_csv('docs/data/gdp_by_country.csv',skiprows=4)
+#Use 2016 data for Liechtenstein (because unavailable for 2018)
+gdp.loc[gdp['Country Code']=='LIE','2018']=gdp.loc[gdp['Country Code']=='LIE','2016']
 gdp=gdp[['Country Code','2018']]
 
 #Add iso3 to country
 countries=countries.merge(iso[['code2','code3']], how='left',left_on='id',right_on='code2')
 
 #Merge GDP with countries (miss two countries)
-gdp=gdp.merge(countries[['id','code3']], how='inner', left_on='Country Code', right_on='code3')
+gdp=gdp.merge(countries[['id','code3']], how='right', left_on='Country Code', right_on='code3')
 gdp=gdp[['id','2018']]
 gdp.columns=['country','GDP']
 
@@ -92,6 +100,9 @@ covariates['covid_tweets'] = covariates['covid_tweets'].fillna(value=0)
 
 #Spatial covariates
 cov_gdf=countries[['id','geometry']].merge(covariates,how='inner',left_on='id',right_on='country_id')
+
+#Drop country id for solar correlation plot
+covariates.drop(['country_id'],axis=1,inplace=True)
 
 #Export to CSV
 covariates.to_csv('docs/data/covariates_by_country.csv',index=False)

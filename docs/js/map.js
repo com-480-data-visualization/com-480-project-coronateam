@@ -30,8 +30,9 @@ var projectionCanvas = d3.geoMercator()
     .scale(1200)
     .translate([ width/2, height/2 ]);
 
+
 // Load all files needed in the vizualisation
-Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv")]).then(function(data) {
+Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv"), d3.csv("data/covariates_by_country.csv")]).then(function(data) {
   var dataGeo = data[0];
   var dataTweets = data[1];
   var dataCorona = data[2];
@@ -39,6 +40,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var dataCentroids = data[4];
   var dataGeoRegions = data[5];
   var dataTrendsRegions = data[6];
+  var dataCorrelation = data[7];
 
   // Fecth the centroids of each country (pre-computed)
   var centroids = new Map();
@@ -58,6 +60,113 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var tweetsMap = d3.map();
   var dataMap = d3.map();
   var trendsMap = d3.map();
+
+
+  ///////////////////////////////////////////
+  /////////////////SOLAR/////////////////////
+  ///////////////////////////////////////////
+
+  //Convert to angular coordinates
+  var reMap = function(oldValue) {
+    var oldMin = 0,
+        oldMax = -359,
+        newMin = 0,
+        newMax = (Math.PI * 2),
+        newValue = (((oldValue - 90 - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
+
+    return newValue;
+  }
+
+  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
+  // second is ring (range 0 to 1), aka Radial Coordinate.
+  // third is node size radius (center to edge)
+  var dataCorrelation = [
+  [reMap(25), 1, 20, 'label 1'],
+  [reMap(105), 0.8, 10, 'label 2'],
+  [reMap(266), 1, 8, 'label 3'],
+  [reMap(8), 0.2, 22, 'label 4'],
+  [reMap(189), 1, 28, 'label 5'],
+  [reMap(350), 0.6, 15, 'label 6'],
+  [reMap(119), 0.4, 24, 'label 7'],
+  [reMap(305), 0.8, 31, 'label 8']
+];
+
+var widthSolar = document.getElementById('solar').offsetWidth,
+  heightSolar = document.getElementById('solar').offsetHeight;
+var radius = Math.min(widthSolar, heightSolar) / 2 - 30; // radius of the whole chart
+
+var r = d3.scaleLinear()
+  .domain([0, 1])
+  .range([0, radius]);
+
+var solar = d3.select('#solar')
+  .append('svg')
+  //.call('zoom')
+  .attr('width', widthSolar)
+  .attr('height', heightSolar)
+  .append('g')
+  .attr('transform', 'translate(' + widthSolar / 2 + ',' + heightSolar / 2 + ')');
+
+var gr = solar.append('g')
+  .attr('class', 'r axis')
+  .selectAll('g')
+  .data(r.ticks(5).slice(1))
+  .enter().append('g');
+
+gr.append('circle')
+  .attr('r', r)
+
+var ga = solar.append('g')
+  .attr('class', 'a axis')
+  .selectAll('g')
+  .data(d3.range(0, 360, 30)) // line density
+  .enter().append('g')
+  .attr('transform', function(d) {
+    return 'rotate(' + -d + ')';
+  });
+
+ga.append('line')
+  .attr('x2', radius);
+
+var line = d3.radialLine()
+  .radius(function(d) {
+    return r(d[1]);
+  })
+  .angle(function(d) {
+    return -d[0] + Math.PI / 2;
+  });
+
+
+solar.selectAll('point')
+  .data(dataCorrelation)
+  .enter()
+  .append('circle')
+  .attr('class', 'point')
+  .attr('transform', function(d) {
+    //console.log(d);
+
+    var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
+    return 'translate(' + coors + ')'
+  })
+  .attr('r', function(d) {
+    return 10;
+  })
+  .attr('fill',function(d,i){
+    return "pink";
+  });
+
+solar.selectAll('point')
+  .data(dataCorrelation)
+  .enter().append("text")
+      .attr('transform', function(d) {
+    //console.log(d);
+
+    var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
+    return 'translate(' + coors + ')'
+  })
+      .text(function(d) {
+        return d[3];
+      });
 
   ///////////////////////////////////////////
   ////////////////////MAP////////////////////
@@ -499,7 +608,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .style("alignment-baseline", "middle")
 
   // Bubbles legend
-  var valuesToShow = [500, 10000, 30000]
+  var valuesToShow = [200, 2000, 7000, 15000]
   var xCircle = width - 80
   var xLabel = xCircle - 80;
   var yCircle = height - 40;
@@ -510,8 +619,8 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     .enter()
     .append("circle")
       .attr("cx", xCircle)
-      .attr("cy", function(d){ return yCircle - size(d) } )
-      .attr("r", function(d){ return size(d) })
+      .attr("cy", function(d){ return yCircle - sizeScaleCorona(d) } )
+      .attr("r", function(d){ return sizeScaleCorona(d) })
       .style("fill", "none")
       .attr("stroke", "black")
 
@@ -520,10 +629,10 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     .data(valuesToShow)
     .enter()
     .append("line")
-      .attr('x1', function(d){ return xCircle - size(d) } )
+      .attr('x1', function(d){ return xCircle - sizeScaleCorona(d) } )
       .attr('x2', xLabel + 10)
-      .attr('y1', function(d){ return yCircle - size(d) } )
-      .attr('y2', function(d){ return yCircle - size(d) } )
+      .attr('y1', function(d){ return yCircle - sizeScaleCorona(d) } )
+      .attr('y2', function(d){ return yCircle - sizeScaleCorona(d) } )
       .attr('stroke', 'black')
       .style('stroke-dasharray', ('2,2'))
 
@@ -533,9 +642,9 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     .enter()
     .append("text")
       .attr('x', xLabel)
-      .attr('y', function(d){ return yCircle - size(d) } )
+      .attr('y', function(d){ return yCircle - sizeScaleCorona(d) } )
       .text( function(d){
-        return d + ' tweets'
+        return d + ' cases'
       } )
       .style("font-size", 12)
       .attr('alignment-baseline', 'middle')
