@@ -320,6 +320,8 @@ solar.selectAll('point')
     currentCountry = d;
     let coronaInfos = d3.map(dataMap.get(d.properties.id)) || d3.map();
     let trendsInfos = d3.map(trendsMap.get(d.properties.id)) || d3.map();
+    let tweetsNumber = tweetsMap.get(d.properties.id) || 0;
+
     d3.select(".country-details")
     .html(function() {
       let location = d.properties.NUTS_NAME;
@@ -330,8 +332,8 @@ solar.selectAll('point')
       <div class="stats">
         <div><strong>Deaths</strong>${coronaInfos.get('Deaths') || 0  }</div>
         <div><strong>Cases</strong>${coronaInfos.get('Confirmed') || 0 }</div>
-        <div><strong>Google Index</strong>${trendsInfos.get('trends_covid')}</div>
-        <div><strong>Tweets</strong>N/A</div>
+        <div><strong>Google Index</strong>${trendsInfos.get('trends_covid') || 0}</div>
+        <div><strong>Tweets</strong>${tweetsNumber || 0}</div>
       </div>
       `;});
 
@@ -417,22 +419,20 @@ solar.selectAll('point')
       return d.date == parsedDate
 
     })
-
     tweetsMap = {};
     newDataTweets.forEach(function(d){
       if (d['country_id'] in tweetsMap){
-        tweetsMap[d['country_id']] = parseInt(tweetsMap[d['country_id']]) + parseInt(d.count);
+        tweetsMap[d['country_id']] = parseInt(tweetsMap[d['country_id']]) + parseInt(d.covid_tweets);
       }
       else{
-        tweetsMap[d['country_id']] = parseInt(d.count);
+        tweetsMap[d['country_id']] = parseInt(d.covid_tweets);
       }
     });
+    tweetsMap = d3.map(tweetsMap);
 
-    tweetsMap = d3.cartogram(tweetsMap);
     newDataCorona = dataCorona.filter(function(d) {
       return d.date == parsedDate;
     })
-
     dataMap = {};
     newDataCorona.forEach(function(d){
       dataMap[d['country_id']] = {}
@@ -440,7 +440,6 @@ solar.selectAll('point')
       dataMap[d['country_id']]['Confirmed'] = d.covid_confirmed;
       dataMap[d['country_id']]['Deaths'] = d.covid_deaths;
     });
-
     dataMap = d3.map(dataMap)
 
     trendsMap = {};
