@@ -71,7 +71,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var dataMap = d3.map();
   var trendsMap = d3.map();
 
-
   ///////////////////////////////////////////
   ////////////////////MAP////////////////////
   ///////////////////////////////////////////
@@ -569,14 +568,14 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var colorTrendButton = document.getElementById('heatmap_switch');
   colorTrendButton.onclick = function(){
     if(heatmap_enabled){
-      heatmap_enabled = false; 
+      heatmap_enabled = false;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    else { 
-      heatmap_enabled = true; 
+    else {
+      heatmap_enabled = true;
       displayHeat(newDataTweets)
     }
-    
+
   };
 
 
