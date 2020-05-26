@@ -2,6 +2,7 @@ function drawSolar(data){
 
   var widthSolar = document.getElementById('solar').offsetWidth,
     heightSolar = document.getElementById('solar').offsetHeight;
+
   var radius = Math.min(widthSolar, heightSolar) / 2 - 15; // radius of the whole chart
 
   var r = d3.scaleLinear()

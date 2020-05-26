@@ -29,7 +29,6 @@
 
 	</head>
 	<body>
-
 		<!--   Header  -->
 		<nav class="navbar navbar-expand-lg navbar-light bg-light" id="topnav">
 	        <div class="container-fluid">
@@ -66,16 +65,20 @@
 			<div class="header">GENERAL INFORMATIONS</div>
 
 			<div class="parameters">
-				<label class="container">Show Tweets HeatMap <i class="fas fa-question-circle"></i>
-				  <input type="checkbox" checked="checked">
+				<label class="container">Show Tweets HeatMap 
+					<i id="tweetHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
+					<div id="tweetTooltip" role="tooltip">When selected, this option add an HeatMap layer on the vizualisation that represent the density of tweets mentionning coronavirus.</div>
+				  <input type="checkbox" checked="checked" id="heatmap_switch">
 				  <span class="checkmark"></span>
 				</label>
 
-				<label class="container">Show Google Index Score <i class="fas fa-question-circle"></i>
-				  <input type="checkbox">
+				<label class="container">Show Google Index Score 
+					<i id="googleHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
+					<div id="googleTooltip" role="tooltip">When selected, this option add a Color Scale layer on the vizualisation that represent Google Trend Index of the keyword "coronavirus" in each country/region.</div>
+				  <input type="checkbox" checked="checked" id="google_index_switch">
 				  <span class="checkmark"></span>
 				</label>
-			</div>
+			</div>			
 
 			<hr>
 
@@ -88,7 +91,6 @@
 			</div>
 
 			<div id="solar-plot" class="tabcontent">
-			  <div class="dates"><div><strong>General stats</strong></div></div>
 		      <div id="solar"></div>
 			</div>
 
@@ -109,12 +111,9 @@
 
 	</div>
 
-
-
-
-
 		<!-- Libraries and scripts TODO: put them in local -->
 		<script src="lib/jquery-3.4.1.slim.min.js"></script>
+		<script src="https://unpkg.com/@popperjs/core@2"></script>
 		<script src="lib/d3.min.js"></script>
 
 		<script src="js/colorbrewer.js"></script>
@@ -132,31 +131,126 @@
 		<script src="js/infosCountryChart.js"></script>
 		<script src="js/solarPlot.js"></script>
 		<!-- <script src="js/3d.js"></script> -->
+		
+		<script type="text/javascript">
+			var canvasDrawed = false;
+			function openTab(evt, idTab) {
+			  // Declare all variables
+			  var i, tabcontent, tablinks;
+
+			  // Get all elements with class="tabcontent" and hide them
+			  tabcontent = document.getElementsByClassName("tabcontent");
+			  for (i = 0; i < tabcontent.length; i++) {
+			    tabcontent[i].style.display = "none";
+			  }
+
+			  // Get all elements with class="tablinks" and remove the class "active"
+			  tablinks = document.getElementsByClassName("tablinks");
+			  for (i = 0; i < tablinks.length; i++) {
+			    tablinks[i].className = tablinks[i].className.replace(" active", "");
+			  }
+
+			  // Show the current tab, and add an "active" class to the button that opened the tab
+			  document.getElementById(idTab).style.display = "block";
+			  evt.currentTarget.className += " active";
+
+
+			  ///////////////////////////////////////////
+			  /////////////////SOLAR/////////////////////
+			  ///////////////////////////////////////////
+
+			  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
+			  // second is ring (range 0 to 1), aka Radial Coordinate.
+			  // third is node size radius (center to edge)
+			 
+			  if (idTab == "solar-plot" && !canvasDrawed){
+				  var dataCorrelation = [
+				    [0, 1, 'Confirmed'],
+				    [0, 0.96779387, 'Deaths'],
+				    [1.7135959928671598, 0.68897829, 'Trends'],
+				    [4.569589314312426, 0.17482298, 'Tweets'],
+				    [2.2514747351, 0.49888116, 'Pop'],
+				    [3.4271919857343196, -0.32202591, 'Youngs'],
+				    [2.284794657156213, 0.52632641, 'GDP'],
+				  ]; //will be replaced by data_solar.csv
+
+
+				  drawSolar(dataCorrelation);//Draw solar plot
+				  canvasDrawed = true;
+				}
+			}
+
+			// Get the element with id="defaultOpen" and click on it
+			document.getElementById("left-button").click();
+		</script>
 
 		<script type="text/javascript">
-				function openTab(evt, idTab) {
-				  // Declare all variables
-				  var i, tabcontent, tablinks;
+			const button = document.querySelector('#tweetHelp');
+			const tooltip = document.querySelector('#tweetTooltip');
 
-				  // Get all elements with class="tabcontent" and hide them
-				  tabcontent = document.getElementsByClassName("tabcontent");
-				  for (i = 0; i < tabcontent.length; i++) {
-				    tabcontent[i].style.display = "none";
-				  }
+			Popper.createPopper(button, tooltip, {
+			modifiers: [
+			  {
+			    name: 'offset',
+			    options: {
+			      offset: [-200, -140],
+			    },
+			  },
+			],
+			});
 
-				  // Get all elements with class="tablinks" and remove the class "active"
-				  tablinks = document.getElementsByClassName("tablinks");
-				  for (i = 0; i < tablinks.length; i++) {
-				    tablinks[i].className = tablinks[i].className.replace(" active", "");
-				  }
+			function show() {
+				tooltip.setAttribute('data-show', '');
+			}
 
-				  // Show the current tab, and add an "active" class to the button that opened the tab
-				  document.getElementById(idTab).style.display = "block";
-				  evt.currentTarget.className += " active";
-				}
+			function hide() {
+				tooltip.removeAttribute('data-show');
+			}
 
-				// Get the element with id="defaultOpen" and click on it
-				document.getElementById("left-button").click();
-			</script>
+			const showEvents = ['mouseenter', 'focus'];
+			const hideEvents = ['mouseleave', 'blur'];
+
+			showEvents.forEach(event => {
+				button.addEventListener(event, show);
+			});
+
+			hideEvents.forEach(event => {
+				button.addEventListener(event, hide);
+			});
+
+
+			const button_2 = document.querySelector('#googleHelp');
+			const tooltip_2 = document.querySelector('#googleTooltip');
+
+			Popper.createPopper(button_2, tooltip_2, {
+			modifiers: [
+			  {
+			    name: 'offset',
+			    options: {
+			      offset: [-200, -175],
+			    },
+			  },
+			],
+			});
+
+			function show_2() {
+				tooltip_2.setAttribute('data-show', '');
+			}
+
+			function hide_2() {
+				tooltip_2.removeAttribute('data-show');
+			}
+
+			const showEvents_2 = ['mouseenter', 'focus'];
+			const hideEvents_2 = ['mouseleave', 'blur'];
+
+			showEvents_2.forEach(event => {
+				button_2.addEventListener(event, show_2);
+			});
+
+			hideEvents_2.forEach(event => {
+				button_2.addEventListener(event, hide_2);
+			});
+		</script>
 	</body>
 </html>

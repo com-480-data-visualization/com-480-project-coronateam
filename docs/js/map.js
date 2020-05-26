@@ -1,6 +1,9 @@
 var width  = window.innerWidth,
     height = window.innerHeight;
 
+var heatmap_enabled = true
+var colorTrend_enabled = true
+
 // The svg containing all our viz
 var svg =  d3.select("#map")
   .append("svg")
@@ -62,33 +65,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var trendsMap = d3.map();
 
   ///////////////////////////////////////////
-  /////////////////SOLAR/////////////////////
-  ///////////////////////////////////////////
-
-  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
-  // second is ring (range 0 to 1), aka Radial Coordinate.
-  // third is node size radius (center to edge)
-
-
-  var dataCorrelation = [
-    [0,1,"Confirmed","sun"],
-    [0,0.96779387,"Deaths","planet"],
-    [4.783788813,0.96779387,"Neighbors","planet"],
-    [4.569589314,0.24385586,"Measures","planet"],
-    [1.713595993,0.68897829,"Trends","planet"],
-    [2.250012,0.17482298,"Tweets","moon"],
-    [2.192409,0.49888116,"Pop","moon"],
-    [3.488445,0.25264166,"Young","moon"],
-    [3.427191986,0.3239101,"Elderly","planet_moon"],
-    [2.284794657,0.52632641,"GDP","planet_moon"],
-    [5.569186977,0.22491564,"Health exp","planet"],
-    [3.99839065,0.20621249,"Internet","planet"]
-  ]; //will be replaced by data_solar.csv
-
-
-drawSolar(dataCorrelation); //Draw solar plot
-
-  ///////////////////////////////////////////
   ////////////////////MAP////////////////////
   ///////////////////////////////////////////
 
@@ -104,7 +80,7 @@ drawSolar(dataCorrelation); //Draw solar plot
     .enter()
       .append("path")
       .attr("fill", function (d) {
-        return colorScaleTrends(1);
+        return colorScaleTrends(0);
         })
       .attr("d", d3.geoPath().projection(projection))
       .style("stroke", "#abb7b7")
@@ -128,7 +104,7 @@ drawSolar(dataCorrelation); //Draw solar plot
 
   // Update the map color depending on if the map is zoomed/centered on a country
   var displayMap = function(trendsMap, trendsMapRegions){
-    if (!centered){
+    if (!centered && colorTrend_enabled){
       svg.selectAll("path").attr("fill", function (d) {
       var infos = d3.map(trendsMap.get(d.properties.id));
       d.total = infos.get('trends_covid') || 0;
@@ -142,7 +118,7 @@ drawSolar(dataCorrelation); //Draw solar plot
           .attr("d", d3.geoPath()
           .projection(projection));
 
-      if(trendsMapRegions){
+      if(trendsMapRegions && colorTrend_enabled){
         g.selectAll(".path_regions").attr("fill", function (d) {
           var infos = d3.map(trendsMapRegions.get(d.properties.id));
           d.total = infos.get('trends_covid') || 0;
@@ -151,7 +127,6 @@ drawSolar(dataCorrelation); //Draw solar plot
         })
         .attr("d", d3.geoPath()
             .projection(projection));
-
       }
     }
   };
@@ -219,14 +194,15 @@ drawSolar(dataCorrelation); //Draw solar plot
   ///////////////////////////////////////////
   /////////////////HEATMAP//////////////////
   ///////////////////////////////////////////
-
   var displayHeat = function(data){
-    var heat = simpleheat(canvas);
-    data.forEach(d => {d.coords=projectionCanvas([d.lon, d.lat]); })
-    heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
-    heat.radius(10, 10);
-    heat.max(d3.max(data, d => +d.covid_tweets));
-    heat.draw(0.05);
+    if(heatmap_enabled){
+      var heat = simpleheat(canvas);
+      data.forEach(d => {d.coords=projectionCanvas([d.lon, d.lat]); })
+      heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
+      heat.radius(10, 10);
+      heat.max(d3.max(data, d => +d.covid_tweets));
+      heat.draw(0.05);
+    }
   }
 
   ///////////////////////////////////////////
@@ -568,4 +544,32 @@ drawSolar(dataCorrelation); //Draw solar plot
       .style("font-size", 12)
       .attr('alignment-baseline', 'middle')
       .attr('text-anchor', 'end')
+
+
+
+///////////////////////////////////////////
+//////////////////ON/OFF //////////////////
+///////////////////////////////////////////
+
+  var colorTrendButton = document.getElementById('google_index_switch');
+  colorTrendButton.onclick = function(){
+    if(colorTrend_enabled){colorTrend_enabled = false; }
+    else{ colorTrend_enabled = true; }
+    displayMap(trendsMap, trendsMapRegions);
+  };
+
+  var colorTrendButton = document.getElementById('heatmap_switch');
+  colorTrendButton.onclick = function(){
+    if(heatmap_enabled){
+      heatmap_enabled = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    else {
+      heatmap_enabled = true;
+      displayHeat(newDataTweets)
+    }
+
+  };
+
+
 });
