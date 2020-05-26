@@ -36,9 +36,9 @@ pop.to_csv('docs/data/pop_toreshape.csv',index=False)
 #reshape with reshape_demographics.R
 pop=pd.read_csv('docs/data/demography_by_country.csv')
 
-#Only keep %female
+#Drop males and females (zero correlation)
 pop.drop(['male'],axis=1,inplace=True)
-
+pop.drop(['female'],axis=1,inplace=True)
 
 ## NUMBER OF NEIGHBORING COUNTRIES
 

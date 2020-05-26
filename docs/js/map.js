@@ -68,16 +68,21 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
   // second is ring (range 0 to 1), aka Radial Coordinate.
   // third is node size radius (center to edge)
- 
+
 
   var dataCorrelation = [
-    [0, 1, 'Confirmed'],
-    [0, 0.96779387, 'Deaths'],
-    [1.7135959928671598, 0.68897829, 'Trends'],
-    [4.569589314312426, 0.17482298, 'Tweets'],
-    [2.2514747351, 0.49888116, 'Pop'],
-    [3.4271919857343196, -0.32202591, 'Youngs'],
-    [2.284794657156213, 0.52632641, 'GDP'],
+    [0,1,"Confirmed","sun"],
+    [0,0.96779387,"Deaths","planet"],
+    [4.783788813,0.96779387,"Neighbors","planet"],
+    [4.569589314,0.24385586,"Measures","planet"],
+    [1.713595993,0.68897829,"Trends","planet"],
+    [2.250012,0.17482298,"Tweets","moon"],
+    [2.192409,0.49888116,"Pop","moon"],
+    [3.488445,0.25264166,"Young","moon"],
+    [3.427191986,0.3239101,"Elderly","planet_moon"],
+    [2.284794657,0.52632641,"GDP","planet_moon"],
+    [5.569186977,0.22491564,"Health exp","planet"],
+    [3.99839065,0.20621249,"Internet","planet"]
   ]; //will be replaced by data_solar.csv
 
 
