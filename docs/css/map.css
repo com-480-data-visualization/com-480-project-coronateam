@@ -204,7 +204,9 @@ i.fa-pause{
 /* Custom CheckBoxes */
 
 .parameters{
-  padding: 15px;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 /* Customize the label (the container) */
 .container {
@@ -321,5 +323,6 @@ i.fa-pause{
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-top: none;
+  height: 18em;
 }
 
