@@ -1,11 +1,19 @@
 var width  = window.innerWidth,
     height = window.innerHeight;
 
+const scale = 1200 * width / 1440;
 var heatmap_enabled = true
 var colorTrend_enabled = true
 
 // The svg containing all our viz
-var svg =  d3.select("#map")
+var svg_global =  d3.select("#map")
+  .append("svg")
+  .attr("viewBox", "0 0 " + width + " "+ height)
+  .append("g")
+  .attr("width", width)
+  .attr("height", height);
+
+var svg =  svg_global
   .append("svg")
   .attr("viewBox", "0 0 " + width + " "+ height)
   .append("g")
@@ -21,16 +29,17 @@ var canvasLayer = d3.select("#heatmap")
 var canvas = canvasLayer.node(),
     ctx    = canvas.getContext("2d");
 
-// Map projection to compute coordinates
+// Map projection to compute coordinates (width/640)*100
+console.log("width:", width)
 var projection = d3.geoMercator()
   .center([5,48])
-  .scale(1200)
+  .scale(scale)
   .translate([ width/2, height/2 ]);
 
 // Projection used to position the heatmap during zoom
 var projectionCanvas = d3.geoMercator()
     .center([5,48])
-    .scale(1200)
+    .scale(scale)
     .translate([ width/2, height/2 ]);
 
 
@@ -472,7 +481,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var distance_from_top = (height - 50)
 
   // Color Legend
-  svg
+  svg_global
     .append("text")
       .style("fill", "black")
       .attr("x", 20)
@@ -481,7 +490,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .html("Google Index")
       .style("font-size", 12)
 
-  svg.selectAll("dots")
+  svg_global.selectAll("dots")
     .data(labels)
     .enter()
     .append("rect")
@@ -491,7 +500,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr("height", size_l)
       .style("fill", function(d){ return colorScaleTrends(d)})
 
-  svg.selectAll("labels")
+  svg_global.selectAll("labels")
     .data(labels)
     .enter()
     .append("text")
@@ -508,7 +517,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var xLabel = xCircle - 80;
   var yCircle = height - 40;
 
-  svg
+  svg_global
     .selectAll("legend")
     .data(valuesToShow)
     .enter()
@@ -519,7 +528,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .style("fill", "none")
       .attr("stroke", "black")
 
-  svg
+  svg_global
     .selectAll("legend")
     .data(valuesToShow)
     .enter()
@@ -531,7 +540,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       .attr('stroke', 'black')
       .style('stroke-dasharray', ('2,2'))
 
-  svg
+  svg_global
     .selectAll("legend")
     .data(valuesToShow)
     .enter()
