@@ -53,6 +53,14 @@ function drawSolar(data){
     });
 
 
+  var tooltip = d3.select("#solar")
+  	.append("div")
+  	.style("position", "absolute")
+  	.style("z-index", "10")
+  	.style("visibility", "hidden")
+  	.text("a simple tooltip");
+
+
   solar.selectAll('point')
     .data(data)
     .enter()
@@ -63,7 +71,24 @@ function drawSolar(data){
       return 'translate(' + coors + ')'
     })
     .attr('r', function(d) {
-      return 5; // radius for planets
+      if(d[3]=='moon'){
+        var rcircle=3;
+      }else{
+        var rcircle=7;
+      }
+      return rcircle;
+    })
+    .attr('stroke', function(d) {
+      if(d[3]=='planet_moon'){
+        var stroke='#a6a6a6';
+      }
+      return stroke;
+    })
+    .attr('stroke-width', function(d) {
+      if(d[3]=='planet_moon'){
+        var strokew='4px';
+      }
+      return strokew;
     })
     .attr('fill',function(d){
       if(d[1]==1){
@@ -76,17 +101,17 @@ function drawSolar(data){
       return color;
     });
 
-  solar.selectAll('point')
-    .data(data)
-    .enter().append("text")
-        .attr('transform', function(d) {
-      var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
-      return 'translate(' + coors + ')'
-    })
-        .attr("font-size", "10px")
-        .attr("fill",'#404040')
-        .text(function(d) {
-          return d[2];
-        });
+  // solar.selectAll('point')
+  //   .data(data)
+  //   .enter().append("text")
+  //       .attr('transform', function(d) {
+  //     var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
+  //     return 'translate(' + coors + ')'
+  //   })
+  //       .attr("font-size", "10px")
+  //       .attr("fill",'#404040')
+  //       .text(function(d) {
+  //         return d[2];
+  //       });
 
 }

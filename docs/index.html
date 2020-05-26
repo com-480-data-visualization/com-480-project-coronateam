@@ -65,20 +65,20 @@
 			<div class="header">GENERAL INFORMATIONS</div>
 
 			<div class="parameters">
-				<label class="container">Show Tweets HeatMap 
+				<label class="container">Show Tweets HeatMap
 					<i id="tweetHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
 					<div id="tweetTooltip" role="tooltip">When selected, this option add an HeatMap layer on the vizualisation that represent the density of tweets mentionning coronavirus.</div>
 				  <input type="checkbox" checked="checked" id="heatmap_switch">
 				  <span class="checkmark"></span>
 				</label>
 
-				<label class="container">Show Google Index Score 
+				<label class="container">Show Google Index Score
 					<i id="googleHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
 					<div id="googleTooltip" role="tooltip">When selected, this option add a Color Scale layer on the vizualisation that represent Google Trend Index of the keyword "coronavirus" in each country/region.</div>
 				  <input type="checkbox" checked="checked" id="google_index_switch">
 				  <span class="checkmark"></span>
 				</label>
-			</div>			
+			</div>
 
 			<hr>
 
@@ -131,7 +131,7 @@
 		<script src="js/infosCountryChart.js"></script>
 		<script src="js/solarPlot.js"></script>
 		<!-- <script src="js/3d.js"></script> -->
-		
+
 		<script type="text/javascript">
 			var canvasDrawed = false;
 			function openTab(evt, idTab) {
@@ -162,17 +162,22 @@
 			  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
 			  // second is ring (range 0 to 1), aka Radial Coordinate.
 			  // third is node size radius (center to edge)
-			 
+
 			  if (idTab == "solar-plot" && !canvasDrawed){
-				  var dataCorrelation = [
-				    [0, 1, 'Confirmed'],
-				    [0, 0.96779387, 'Deaths'],
-				    [1.7135959928671598, 0.68897829, 'Trends'],
-				    [4.569589314312426, 0.17482298, 'Tweets'],
-				    [2.2514747351, 0.49888116, 'Pop'],
-				    [3.4271919857343196, -0.32202591, 'Youngs'],
-				    [2.284794657156213, 0.52632641, 'GDP'],
-				  ]; //will be replaced by data_solar.csv
+					var dataCorrelation = [
+					    [0,1,"Confirmed","sun"],
+					   // [0,0.96779387,"Deaths","planet"],
+					    [4.569589314,0.17625356,"Neighbors","planet"],
+					    [5.569186977,0.24385586,"Measures","planet"],
+					    [1.713595993,0.68897829,"Trends","planet"],
+					    [2.250012,0.62,"Tweets","moon"],
+					    [2.192409,0.45,"Pop","moon"],
+					    [3.488445,-0.25,"Young","moon"],
+					    [3.427191986,0.3239101,"Elderly","planet_moon"],
+					    [2.284794657,0.52632641,"GDP","planet_moon"],
+					    [4.783788813,0.22491564,"Health exp","planet"],
+					    [3.99839065,-0.20621249,"Internet","planet"]
+					  ]; //will be replaced by data_solar.csv
 
 
 				  drawSolar(dataCorrelation);//Draw solar plot
