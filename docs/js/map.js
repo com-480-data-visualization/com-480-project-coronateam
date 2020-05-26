@@ -1,6 +1,7 @@
 var width  = window.innerWidth,
     height = window.innerHeight;
 
+const scale = 1200 * width / 1440;
 var heatmap_enabled = true
 var colorTrend_enabled = true
 
@@ -28,16 +29,17 @@ var canvasLayer = d3.select("#heatmap")
 var canvas = canvasLayer.node(),
     ctx    = canvas.getContext("2d");
 
-// Map projection to compute coordinates
+// Map projection to compute coordinates (width/640)*100
+console.log("width:", width)
 var projection = d3.geoMercator()
   .center([5,48])
-  .scale(1200)
+  .scale(scale)
   .translate([ width/2, height/2 ]);
 
 // Projection used to position the heatmap during zoom
 var projectionCanvas = d3.geoMercator()
     .center([5,48])
-    .scale(1200)
+    .scale(scale)
     .translate([ width/2, height/2 ]);
 
 

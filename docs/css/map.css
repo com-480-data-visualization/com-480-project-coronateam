@@ -58,7 +58,7 @@
   position: absolute;
   right: 0;
   margin:1em;
-  width:360px;
+  width:23em;
   background:#fff;
   border-radius:5px;
   box-shadow:0px 2px 3px -1px rgba(151, 171, 187, 0.7);
@@ -71,7 +71,7 @@
   position: absolute;
   left: 0;
   margin:1em;
-  width:340px;
+  width:23em;
   background:#fff;
   border-radius:5px;
   box-shadow:1px 2px 3px 1px rgba(151, 171, 187, 0.7);
