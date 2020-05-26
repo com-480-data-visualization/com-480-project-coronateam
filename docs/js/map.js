@@ -32,7 +32,7 @@ var projectionCanvas = d3.geoMercator()
 
 
 // Load all files needed in the vizualisation
-Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv"), d3.csv("data/covariates_by_country.csv")]).then(function(data) {
+Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_tweets.csv"), d3.csv("data/geocoded_covid_cases.csv"), d3.csv("data/geocoded_trends_bycountry.csv"), d3.json("data/europe_countries_centroids.geojson"), d3.json("data/europe_regions.geojson"), d3.csv("data/geocoded_trends_byregion.csv"), d3.csv("data/data_solar.csv")]).then(function(data) {
   var dataGeo = data[0];
   var dataTweets = data[1];
   var dataCorona = data[2];
@@ -66,107 +66,22 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   /////////////////SOLAR/////////////////////
   ///////////////////////////////////////////
 
-  //Convert to angular coordinates
-  var reMap = function(oldValue) {
-    var oldMin = 0,
-        oldMax = -359,
-        newMin = 0,
-        newMax = (Math.PI * 2),
-        newValue = (((oldValue - 90 - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
-
-    return newValue;
-  }
-
   // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
   // second is ring (range 0 to 1), aka Radial Coordinate.
   // third is node size radius (center to edge)
   var dataCorrelation = [
-  [reMap(25), 1, 20, 'label 1'],
-  [reMap(105), 0.8, 10, 'label 2'],
-  [reMap(266), 1, 8, 'label 3'],
-  [reMap(8), 0.2, 22, 'label 4'],
-  [reMap(189), 1, 28, 'label 5'],
-  [reMap(350), 0.6, 15, 'label 6'],
-  [reMap(119), 0.4, 24, 'label 7'],
-  [reMap(305), 0.8, 31, 'label 8']
-];
+  [0, 1, 'Confirmed'],
+  [0, 0.96779387, 'Deaths'],
+  [1.7135959928671598, 0.68897829, 'Trends'],
+  [4.569589314312426, 0.17482298, 'Tweets'],
+  [2.2514747351, 0.49888116, 'Pop'],
+  [3.4271919857343196, -0.32202591, 'Youngs'],
+  [2.284794657156213, 0.52632641, 'GDP'],
+]; //will be replaced by data_solar.csv
 
-var widthSolar = document.getElementById('solar').offsetWidth,
-  heightSolar = document.getElementById('solar').offsetHeight;
-var radius = Math.min(widthSolar, heightSolar) / 2 - 30; // radius of the whole chart
+dataMap = d3.map(dataMap)
 
-var r = d3.scaleLinear()
-  .domain([0, 1])
-  .range([0, radius]);
-
-var solar = d3.select('#solar')
-  .append('svg')
-  //.call('zoom')
-  .attr('width', widthSolar)
-  .attr('height', heightSolar)
-  .append('g')
-  .attr('transform', 'translate(' + widthSolar / 2 + ',' + heightSolar / 2 + ')');
-
-var gr = solar.append('g')
-  .attr('class', 'r axis')
-  .selectAll('g')
-  .data(r.ticks(5).slice(1))
-  .enter().append('g');
-
-gr.append('circle')
-  .attr('r', r)
-
-var ga = solar.append('g')
-  .attr('class', 'a axis')
-  .selectAll('g')
-  .data(d3.range(0, 360, 30)) // line density
-  .enter().append('g')
-  .attr('transform', function(d) {
-    return 'rotate(' + -d + ')';
-  });
-
-ga.append('line')
-  .attr('x2', radius);
-
-var line = d3.radialLine()
-  .radius(function(d) {
-    return r(d[1]);
-  })
-  .angle(function(d) {
-    return -d[0] + Math.PI / 2;
-  });
-
-
-solar.selectAll('point')
-  .data(dataCorrelation)
-  .enter()
-  .append('circle')
-  .attr('class', 'point')
-  .attr('transform', function(d) {
-    //console.log(d);
-
-    var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
-    return 'translate(' + coors + ')'
-  })
-  .attr('r', function(d) {
-    return 10;
-  })
-  .attr('fill',function(d,i){
-    return "pink";
-  });
-
-solar.selectAll('point')
-  .data(dataCorrelation)
-  .enter().append("text")
-      .attr('transform', function(d) {
-    //console.log(d);
-
-    var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
-    return 'translate(' + coors + ')'
-  })
-      .text(function(d) {
-        return d[3];
-      });
+drawSolar(dataCorrelation); //Draw solar plot
 
   ///////////////////////////////////////////
   ////////////////////MAP////////////////////
@@ -253,7 +168,7 @@ solar.selectAll('point')
     svg.selectAll(".circles").remove();
     svg.selectAll(".cases_text").remove();
 
-    // Load data 
+    // Load data
     var circles = svg.selectAll(".circle")
         .data(data.sort(function(a,b) { return +b.count - +a.count }).filter(function(d,i){ return i<1000
             && centroids.has(d['country_id'])
@@ -266,7 +181,7 @@ solar.selectAll('point')
         .attr("class", "circles")
         .append("circle")
         .attr("class", "circles")
-        .attr("cx", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] }) 
+        .attr("cx", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] })
         .attr("cy", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] })
         .attr("r", 1)
         .transition().duration(80)
@@ -314,7 +229,7 @@ solar.selectAll('point')
   ///////////////////////////////////////////
 
   var formatDateIntoDay = d3.timeFormat("%B %d, %Y");
-  
+
   // Display Infos by country
   function displayDetail(d) {
     currentCountry = d;
@@ -340,7 +255,7 @@ solar.selectAll('point')
     drawChart(currentCountry.properties.id, dates, dataCorona, indexDate);
     }
 
-  // Hide the infos panel + unzoom 
+  // Hide the infos panel + unzoom
   function hideDetail() {
     currentCountry = null
     d3.select(".country-details").html(function() {return '<div class="header">Click on a country for more infos</div>';})
@@ -361,7 +276,7 @@ solar.selectAll('point')
       y = centroid[1];
       k = 2;
       centered = d;
-      
+
       g.selectAll(".path_regions")
         .data(dataGeoRegions.features.filter(function(feature){ return feature.properties.CNTR_CODE == d.properties.id}))
         .enter()
@@ -377,20 +292,20 @@ solar.selectAll('point')
           .style("stroke-width", "1px")
           .style("opacity", .6);
 
-      
-      projectionCanvas.center(centroids.get(d.properties.id)); 
-      projectionCanvas.scale(k*1200); 
-      
+
+      projectionCanvas.center(centroids.get(d.properties.id));
+      projectionCanvas.scale(k*1200);
+
 
     } else {
       x = width / 2;
       y = height / 2;
       k = 1;
       centered = null;
-      
-      projectionCanvas.center(projection.center()); 
-      projectionCanvas.scale(projection.scale()); 
-      
+
+      projectionCanvas.center(projection.center());
+      projectionCanvas.scale(projection.scale());
+
     }
     canvasLayer.style("visibility", "hidden");
 

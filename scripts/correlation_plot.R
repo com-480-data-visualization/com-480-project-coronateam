@@ -10,9 +10,9 @@ library(cluster)
 data <- read_csv('../docs/data/covariates_by_country.csv')
 
 #Replace missign values (in GDP) by median
-data <- data %>% mutate_all(~ifelse(is.na(.x), median(.x, na.rm = TRUE), .x))  
-data <- data %>% column_to_rownames(var = "country_id")
-data <- data %>% select(-male)
+#data <- data %>% mutate_all(~ifelse(is.na(.x), median(.x, na.rm = TRUE), .x))  
+#data <- data %>% column_to_rownames(var = "country_id")
+
 
 data.s <- scale(data)
 
@@ -27,8 +27,8 @@ silhouette(clu.k5, dist) %>% plot()
 
 # data <- data %>% filter(rownames(data)=='FR')
 # 
-# pca.data.cor<-data %>% scale() %>% cor(method='pearson')
-# corrplot::corrplot(pca.data.cor, tl.col='black', tl.cex = 0.5, col=colorRampPalette(c("blue","red"))(200))
+pca.data.cor<-data %>% scale() %>% cor(method='pearson')
+corrplot::corrplot(pca.data.cor, tl.col='black', tl.cex = 0.5, col=colorRampPalette(c("blue","red"))(200))
 # 
 # #Run PCA with FactoMineR
 # ncp=3 #number of PC displayed in the results
