@@ -63,21 +63,34 @@
 
 		<!-- Infos on Europe -->
 		<div class="europe-details">
-			<div class="header">EUROPE INFORMATIONS</div>
-		      <div class="dates"><div><strong>Top 5 countries</strong></div></div>
-		      <br>
-		      <br>
-		      <br>
-		      <br>
-		      <br>
-		      <br>
+			<div class="header">GENERAL INFORMATIONS</div>
 
+			<div class="parameters">
+				<label class="container">Show Tweets HeatMap <i class="fas fa-question-circle"></i>
+				  <input type="checkbox" checked="checked">
+				  <span class="checkmark"></span>
+				</label>
 
-		      <div class="dates"><div><strong>General stats</strong></div></div>
-		      <br>
+				<label class="container">Show Google Index Score <i class="fas fa-question-circle"></i>
+				  <input type="checkbox">
+				  <span class="checkmark"></span>
+				</label>
+			</div>
+
+			<hr>
+
+			<div class="tab">
+				<button class="tablinks" onclick="openTab(event, 'top-5')" id="left-button">Top 5 countries</button>
+				<button class="tablinks" onclick="openTab(event, 'solar-plot')" id="right-button">Solar Plot</button>
+			</div>
+			<div id="top-5" class="tabcontent">
+			   <div class="dates"><div><strong>Top 5 countries</strong></div></div>
+			</div>
+
+			<div id="solar-plot" class="tabcontent">
+			  <div class="dates"><div><strong>General stats</strong></div></div>
 		      <div id="solar"></div>
-		      <br>
-
+			</div>
 
 		</div>
 
@@ -120,5 +133,30 @@
 		<script src="js/solarPlot.js"></script>
 		<!-- <script src="js/3d.js"></script> -->
 
+		<script type="text/javascript">
+				function openTab(evt, idTab) {
+				  // Declare all variables
+				  var i, tabcontent, tablinks;
+
+				  // Get all elements with class="tabcontent" and hide them
+				  tabcontent = document.getElementsByClassName("tabcontent");
+				  for (i = 0; i < tabcontent.length; i++) {
+				    tabcontent[i].style.display = "none";
+				  }
+
+				  // Get all elements with class="tablinks" and remove the class "active"
+				  tablinks = document.getElementsByClassName("tablinks");
+				  for (i = 0; i < tablinks.length; i++) {
+				    tablinks[i].className = tablinks[i].className.replace(" active", "");
+				  }
+
+				  // Show the current tab, and add an "active" class to the button that opened the tab
+				  document.getElementById(idTab).style.display = "block";
+				  evt.currentTarget.className += " active";
+				}
+
+				// Get the element with id="defaultOpen" and click on it
+				document.getElementById("left-button").click();
+			</script>
 	</body>
 </html>
