@@ -64,27 +64,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var dataMap = d3.map();
   var trendsMap = d3.map();
 
-  ///////////////////////////////////////////
-  /////////////////SOLAR/////////////////////
-  ///////////////////////////////////////////
-
-  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
-  // second is ring (range 0 to 1), aka Radial Coordinate.
-  // third is node size radius (center to edge)
- 
-
-  var dataCorrelation = [
-    [0, 1, 'Confirmed'],
-    [0, 0.96779387, 'Deaths'],
-    [1.7135959928671598, 0.68897829, 'Trends'],
-    [4.569589314312426, 0.17482298, 'Tweets'],
-    [2.2514747351, 0.49888116, 'Pop'],
-    [3.4271919857343196, -0.32202591, 'Youngs'],
-    [2.284794657156213, 0.52632641, 'GDP'],
-  ]; //will be replaced by data_solar.csv
-
-
-drawSolar(dataCorrelation); //Draw solar plot
 
   ///////////////////////////////////////////
   ////////////////////MAP////////////////////

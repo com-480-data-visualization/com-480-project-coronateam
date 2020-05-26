@@ -326,3 +326,36 @@ i.fa-pause{
   height: 18em;
 }
 
+
+/* Tooltip for checkboxes */ 
+#googleTooltip {
+  background: #fff;
+  width: 20em;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+  z-index: 1000;
+  display: none;
+}
+
+#googleTooltip[data-show] {
+  display: block;
+}
+
+
+#tweetTooltip {
+  background: #fff;
+  width: 20em;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+  z-index: 1000;
+  display: none;
+}
+
+#tweetTooltip[data-show] {
+  display: block;
+}
+
