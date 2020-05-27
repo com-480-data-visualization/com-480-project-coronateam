@@ -80,7 +80,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   // Color scales
   colorScaleTrends = d3.scaleLinear()
     .domain([0, 100])
-    .range(["#ececec", "#0868ac"]);
+    .range(["#ececec", "#4285F4"]);
 
   // Draw the map
   var g = svg.append("g")
@@ -177,8 +177,8 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .attr("r", function(d){ return sizeScaleCorona(d['covid_confirmed'])})
         .style("fill", "#f64747")
         .attr("stroke", "white")
-        .attr("stroke-width", 0.5)
-        .attr("stroke-opacity", 0.5)
+        .attr("stroke-width", 1)
+        .attr("stroke-opacity", 1)
         .attr("fill-opacity", 0.7)
         .style("pointer-events", "none");
 
@@ -190,7 +190,9 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .attr("text-anchor","middle")
         .attr("alignment-baseline", "central")
         .attr("x", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] })
-        .attr("y", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] })
+        .attr("y", function(d){
+          return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1]+4;
+        })
         .attr("fill", "white")
         .attr("font-size", function(d){
             let cases = d["covid_confirmed"];
@@ -215,7 +217,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
       heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
       heat.radius(10, 10);
       heat.max(d3.max(data, d => +d.covid_tweets));
-      heat.draw(0.05);
+      heat.draw(0.1);
     }
   }
 
@@ -386,7 +388,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     displayMap(trendsMap, trendsMapRegions);
     displayHeat(newDataTweets);
     displayCircles(newDataCorona);
-    drawRankings(newDataCorona, currentDate);
+    drawRankings(newDataCorona);
     if(currentCountry != null)
       displayDetail(currentCountry)
   }

@@ -1,5 +1,6 @@
-function drawRankings(data, currentDate) {
-    let margin = { top: 30, bottom: 10, left: 30, right: 10 };
+/// Takes the already filtered day-data and displays it on the left panel
+function drawRankings(data) {
+    let margin = { top: 30, bottom: 5, left: 30, right: 10 };
     let width = document.getElementById('rankings').offsetWidth - margin.right - margin.left,
         height = document.getElementById('rankings').offsetHeight - margin.top - margin.bottom;
 
@@ -11,6 +12,7 @@ function drawRankings(data, currentDate) {
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
+
 
     // Echelles
     let xscale = d3.scaleLinear().range([0, width - 50]);
@@ -25,7 +27,6 @@ function drawRankings(data, currentDate) {
     var yaxis = d3.axisLeft().scale(yscale);
     var g_yaxis = g.append("g").attr("class", "y axis");
 
-    const parseDate = d3.timeFormat("%Y-%m-%d");
     let count = 0;
     const maxDisplay = 10;
     data = data.sort(function(a,b) { return +b['covid_confirmed'] - +a['covid_confirmed'] })
