@@ -1,6 +1,6 @@
 function drawRankings(data, currentDate) {
-    let margin = { top: 30, bottom: 5, left: 50, right: 0 };
-    let width = parseInt(d3.select("#rankings").style("width")),
+    let margin = { top: 30, bottom: 5, left: 50, right: 20 };
+    let width = document.getElementById('rankings').offsetWidth - margin.right,
         height = document.getElementById('rankings').offsetHeight;
 
     d3.select('#rankings').selectAll("svg").remove();
@@ -27,19 +27,12 @@ function drawRankings(data, currentDate) {
 
     const parseDate = d3.timeFormat("%Y-%m-%d");
     let count = 0;
-    const maxDisplay = 7;
+    const maxDisplay = 10;
     data = data.sort(function(a,b) { return +b['covid_confirmed'] - +a['covid_confirmed'] })
         .filter(d => d.date == parseDate(currentDate) && count++ < maxDisplay)
 
     xscale.domain([0, d3.max(data, d => d['covid_confirmed'])]).nice();
     yscale.domain(data.map(d => d['country_id']));
-
-    g_xaxis.transition().call(
-        xaxis
-            .ticks(5)
-            .tickFormat( d3.format(".0s") )
-    );
-    g_yaxis.transition().call(yaxis);
 
     let rect = g
         .selectAll("rect")
@@ -84,14 +77,14 @@ function drawRankings(data, currentDate) {
 
     rect
         .transition()
-        .duration(400) // 400
+        .duration(0) // 400
         .attr("height", yscale.bandwidth())
         .attr("width", d => xscale(d['covid_confirmed']))
         .attr("y", d => yscale(d['country_id']));
 
     textLabels
         .transition()
-        .duration(400) // 400
+        .duration(0) // 400
         .attr("height", yscale.bandwidth())
         .attr("x", 18)
         .attr("opacity", 1)
@@ -100,5 +93,13 @@ function drawRankings(data, currentDate) {
                 return d['covid_confirmed'];
             }
         );
+
+        g_xaxis.transition().call(
+            xaxis
+                .ticks(5)
+                .tickFormat( d3.format(".0s") )
+        );
+        g_yaxis.transition().call(yaxis);
+
 
 }
