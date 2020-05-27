@@ -190,9 +190,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .attr("text-anchor","middle")
         .attr("alignment-baseline", "central")
         .attr("x", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] })
-        .attr("y", function(d){
-          return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1]+4;
-        })
+        .attr("y", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] })
         .attr("fill", "white")
         .attr("font-size", function(d){
             let cases = d["covid_confirmed"];
