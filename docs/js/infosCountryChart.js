@@ -18,7 +18,7 @@ function drawChart(country, dates, dataCorona, dateIndex){
     ];
 
     const parseDate = d3.timeFormat("%Y-%m-%d");
-    const numDates = 5;
+    const numDates = 15;
     let cases = [];
     let deaths = [];
     let datesLabel = [];
@@ -30,10 +30,7 @@ function drawChart(country, dates, dataCorona, dateIndex){
         return n
     }
 
-    console.log(dataCorona)
-
-    let border = [];
-    for (let date = dateIndex; date >= 0; date--) {
+    for (let date = dateIndex; date > dateIndex - numDates && date >= 0; date--) {
         const index = dateIndex - date;
         let currentDate = dates[date];
         dataCorona.forEach(function(d) {

@@ -84,12 +84,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 drawSolar(dataCorrelation); //Draw solar plot
 
   ///////////////////////////////////////////
-  /////////////EUROPE RANKINGS///////////////
-  ///////////////////////////////////////////
-
-drawRankings(dataCorona);
-
-  ///////////////////////////////////////////
   ////////////////////MAP////////////////////
   ///////////////////////////////////////////
 
@@ -405,6 +399,7 @@ drawRankings(dataCorona);
     displayMap(trendsMap, trendsMapRegions);
     displayHeat(newDataTweets);
     displayCircles(newDataCorona);
+    drawRankings(newDataCorona, currentDate);
     if(currentCountry != null)
       displayDetail(currentCountry)
   }
