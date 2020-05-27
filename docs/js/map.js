@@ -294,7 +294,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
 
 
       projectionCanvas.center(centroids.get(d.properties.id));
-      projectionCanvas.scale(k*1200);
+      projectionCanvas.scale(k*projection.scale());
 
 
     } else {
