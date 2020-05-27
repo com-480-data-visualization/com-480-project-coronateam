@@ -52,14 +52,14 @@ function drawSolar(data){
       return -d[0]+ Math.PI / 2;
     });
 
-
+  /*
   var tooltip = d3.select("#solar")
   	.append("div")
   	.style("position", "absolute")
   	.style("z-index", "10")
   	.style("visibility", "hidden")
   	.text("a simple tooltip");
-
+*/
     // Define the div for the tooltip
   var tooltipDiv = d3.select("body").append("div") 
       .attr("class", "tooltip")       
