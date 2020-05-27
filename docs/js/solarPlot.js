@@ -61,8 +61,8 @@ function drawSolar(data){
   	.text("a simple tooltip");
 */
     // Define the div for the tooltip
-  var tooltipDiv = d3.select("body").append("div") 
-      .attr("class", "tooltip")       
+  var tooltipDiv = d3.select("body").append("div")
+      .attr("class", "tooltip")
       .style("opacity", 0)
       .style("z-index", "10");
 
@@ -77,21 +77,21 @@ function drawSolar(data){
         return 'translate(' + coors + ')'
       })
       .attr('r', function(d) {
-        if(d[3]=='moon'){
-          var rcircle=3;
+        if(d[3]=='Moon'){
+          var rcircle=4;
         }else{
-          var rcircle=7;
+          var rcircle=9;
         }
         return rcircle;
       })
       .attr('stroke', function(d) {
-        if(d[3]=='planet_moon'){
+        if(d[3]=='Planet with moon(s)'){
           var stroke='#a6a6a6';
         }
         return stroke;
       })
       .attr('stroke-width', function(d) {
-        if(d[3]=='planet_moon'){
+        if(d[3]=='Planet with moon(s)'){
           var strokew='4px';
         }
         return strokew;
@@ -106,19 +106,19 @@ function drawSolar(data){
         }
         return color;
       })
-      .on("mouseover", function(d) {    
-              tooltipDiv.transition()    
-                  .duration(1)    
-                  .style("opacity", 1);    
-              tooltipDiv.html("Variable    : " + d[2] + "<br/>Relationship: " + d[3])  
-                  .style("left", (d3.event.pageX) + "px")   
-                  .style("top", (d3.event.pageY - 28) + "px");  
-              d3.event.preventDefault();        
-      })          
-      .on("mouseout", function(d) {   
-          tooltipDiv.transition()    
-              .duration(1)  
-              .style("opacity", 0); 
+      .on("mouseover", function(d) {
+              tooltipDiv.transition()
+                  .duration(1)
+                  .style("opacity", 1);
+              tooltipDiv.html("Variable    : " + d[2] + "<br/>Relationship: " + d[3])
+                  .style("left", (d3.event.pageX) + "px")
+                  .style("top", (d3.event.pageY - 28) + "px");
+              d3.event.preventDefault();
+      })
+      .on("mouseout", function(d) {
+          tooltipDiv.transition()
+              .duration(1)
+              .style("opacity", 0);
           d3.event.preventDefault();
       });
 
