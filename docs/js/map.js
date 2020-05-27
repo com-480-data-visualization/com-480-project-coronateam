@@ -192,7 +192,15 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
         .attr("x", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[0] })
         .attr("y", function(d){ return projection([+centroids.get(d['country_id'])[0],+centroids.get(d['country_id'])[1]])[1] })
         .attr("fill", "white")
-        .attr("font-size", 14)
+        .attr("font-size", function(d){
+            let cases = d["covid_confirmed"];
+            let val = sizeScaleCorona(cases);
+            if (cases > 999) { //Scale the text to not overflow when 4 numbers
+                return val * 0.7;
+            } else {
+                return val;
+            }
+        })
         .text(function(d){ return d['covid_confirmed']})
         .style("pointer-events", "none"); //Click through
   };
