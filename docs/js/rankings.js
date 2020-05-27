@@ -1,5 +1,5 @@
 function drawRankings(data, currentDate) {
-    let margin = { top: 30, bottom: 5, left: 30, right: 20 };
+    let margin = { top: 30, bottom: 10, left: 30, right: 10 };
     let width = document.getElementById('rankings').offsetWidth - margin.right - margin.left,
         height = document.getElementById('rankings').offsetHeight - margin.top - margin.bottom;
 
@@ -13,7 +13,7 @@ function drawRankings(data, currentDate) {
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Echelles
-    let xscale = d3.scaleLinear().range([0, width]);
+    let xscale = d3.scaleLinear().range([0, width - 50]);
     let yscale = d3
         .scaleBand()
         .rangeRound([0, height])
@@ -40,14 +40,9 @@ function drawRankings(data, currentDate) {
         .join(
             enter => {
                 var rect_enter = enter.append("rect")
-                    .attr("x", 10)
+                    .attr("x", 5)
                     .attr("y", height) // les pays partent du bas, plop
-                    .style("fill", '#930025');
-
-                rect_enter
-                    .append("text")
-                    .text(function(d){ return d['covid_confirmed']; });
-
+                    .style("fill", '#34495e');
                 return rect_enter;
             },
             exit => exit.remove()
@@ -64,7 +59,7 @@ function drawRankings(data, currentDate) {
                     .attr("y", height) // les pays partent du bas, plop
                     .attr("text-anchor", "right")
                     .attr("opacity", 0)
-                    .attr("fill", '#fff')
+                    .attr("fill", '#000')
                     .text( function(d){
                             return d['covid_confirmed'];
                         }
@@ -80,15 +75,15 @@ function drawRankings(data, currentDate) {
         .duration(0) //Attracts the eye otherwise
         .attr("height", yscale.bandwidth())
         .attr("width", d => xscale(d['covid_confirmed']))
-        .attr("y", d => yscale(d['country_id']));
+        .attr("y", d => yscale(d['country_id']) + 2);
 
     textLabels
         .transition()
         .duration(0)
         .attr("height", yscale.bandwidth())
-        .attr("x", 14)
+        .attr("x", d => xscale(d['covid_confirmed']) + 14)
         .attr("opacity", 1)
-        .attr("y", d => yscale(d['country_id']) + 16)
+        .attr("y", d => yscale(d['country_id']) + 20)
         .text( function(d, i){
                 return d['covid_confirmed'];
             }

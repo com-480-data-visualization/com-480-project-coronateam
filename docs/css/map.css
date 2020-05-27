@@ -248,7 +248,7 @@ i.fa-pause{
 
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
-  background-color: #2196F3;
+  background-color: #34495e;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
