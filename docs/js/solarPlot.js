@@ -60,46 +60,69 @@ function drawSolar(data){
   	.style("visibility", "hidden")
   	.text("a simple tooltip");
 
+    // Define the div for the tooltip
+  var tooltipDiv = d3.select("body").append("div") 
+      .attr("class", "tooltip")       
+      .style("opacity", 0)
+      .style("z-index", "10");
+
 
   solar.selectAll('point')
     .data(data)
     .enter()
     .append('circle')
-    .attr('class', 'point')
-    .attr('transform', function(d) {
-      var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
-      return 'translate(' + coors + ')'
-    })
-    .attr('r', function(d) {
-      if(d[3]=='moon'){
-        var rcircle=3;
-      }else{
-        var rcircle=7;
-      }
-      return rcircle;
-    })
-    .attr('stroke', function(d) {
-      if(d[3]=='planet_moon'){
-        var stroke='#a6a6a6';
-      }
-      return stroke;
-    })
-    .attr('stroke-width', function(d) {
-      if(d[3]=='planet_moon'){
-        var strokew='4px';
-      }
-      return strokew;
-    })
-    .attr('fill',function(d){
-      if(d[1]==1){
-        var color='#696969';
-      } else if(Math.sign(d[1])==-1){
-        var color='#ff7373'
-      } else{
-        var color='#5ac18e'
-      }
-      return color;
-    });
+      .attr('class', 'point')
+      .attr('transform', function(d) {
+        var coors = line([d]).slice(1).slice(0, -1); // removes 'M' and 'Z' from string
+        return 'translate(' + coors + ')'
+      })
+      .attr('r', function(d) {
+        if(d[3]=='moon'){
+          var rcircle=3;
+        }else{
+          var rcircle=7;
+        }
+        return rcircle;
+      })
+      .attr('stroke', function(d) {
+        if(d[3]=='planet_moon'){
+          var stroke='#a6a6a6';
+        }
+        return stroke;
+      })
+      .attr('stroke-width', function(d) {
+        if(d[3]=='planet_moon'){
+          var strokew='4px';
+        }
+        return strokew;
+      })
+      .attr('fill',function(d){
+        if(d[1]==1){
+          var color='#696969';
+        } else if(Math.sign(d[1])==-1){
+          var color='#ff7373'
+        } else{
+          var color='#5ac18e'
+        }
+        return color;
+      })
+      .on("mouseover", function(d) {    
+              tooltipDiv.transition()    
+                  .duration(1)    
+                  .style("opacity", 1);    
+              tooltipDiv.html("d[3]" + "<br/>"  + "d[2]")  
+                  .style("left", (d3.event.pageX) + "px")   
+                  .style("top", (d3.event.pageY - 28) + "px");  
+              d3.event.preventDefault();        
+      })          
+      .on("mouseout", function(d) {   
+          tooltipDiv.transition()    
+              .duration(1)  
+              .style("opacity", 0); 
+          d3.event.preventDefault();
+      });
+
+
 
   // solar.selectAll('point')
   //   .data(data)
