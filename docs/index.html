@@ -66,14 +66,14 @@
 
 			<div class="parameters">
 				<label class="container">Show Tweets HeatMap
-					<i id="tweetHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
+					<i id="tweetHelp" class="fas fa-question-circle" aria-describedby="tweetTooltip"></i>
 					<div id="tweetTooltip" role="tooltip">When selected, this option add an HeatMap layer on the vizualisation that represent the density of tweets mentionning coronavirus.</div>
 				  <input type="checkbox" checked="checked" id="heatmap_switch">
 				  <span class="checkmark"></span>
 				</label>
 
 				<label class="container">Show Google Index Score
-					<i id="googleHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
+					<i id="googleHelp" class="fas fa-question-circle" aria-describedby="googleTooltip"></i>
 					<div id="googleTooltip" role="tooltip">When selected, this option add a Color Scale layer on the vizualisation that represent Google Trend Index of the keyword "coronavirus" in each country/region.</div>
 				  <input type="checkbox" checked="checked" id="google_index_switch">
 				  <span class="checkmark"></span>
@@ -91,7 +91,9 @@
 			</div>
 
 			<div id="solar-plot" class="tabcontent">
-		      <div id="solar"></div>
+		      	<div id="solar"></div>
+		      	<a id="solarButton" class="fas fa-question-circle" aria-describedby="solarTooltip" href="proccessBook.html"></a>
+				<div id="solarTooltip" role="tooltip">This graph represents the correlation between several variables and the number of covid confirmed cases. For more information, please click on the help button to read about it in the process book.</div>
 			</div>
 		</div>
 
@@ -187,10 +189,27 @@
 		</script>
 
 		<script type="text/javascript">
-			const button = document.querySelector('#tweetHelp');
-			const tooltip = document.querySelector('#tweetTooltip');
+			const tweetButton = document.querySelector('#tweetHelp');
+			const tweetTooltip = document.querySelector('#tweetTooltip');
 
-			Popper.createPopper(button, tooltip, {
+			const solarButton = document.querySelector('#solarButton');
+			const solarTooltip = document.querySelector('#solarTooltip');
+
+			const googleButton = document.querySelector('#googleHelp');
+			const googleTooltip = document.querySelector('#googleTooltip');
+
+			Popper.createPopper(solarButton, solarTooltip, {
+			modifiers: [
+			  {
+			    name: 'offset',
+			    options: {
+			      offset: [50, 400],
+			    },
+			  },
+			],
+			});
+
+			Popper.createPopper(tweetButton, tweetTooltip, {
 			modifiers: [
 			  {
 			    name: 'offset',
@@ -201,30 +220,7 @@
 			],
 			});
 
-			function show() {
-				tooltip.setAttribute('data-show', '');
-			}
-
-			function hide() {
-				tooltip.removeAttribute('data-show');
-			}
-
-			const showEvents = ['mouseenter', 'focus'];
-			const hideEvents = ['mouseleave', 'blur'];
-
-			showEvents.forEach(event => {
-				button.addEventListener(event, show);
-			});
-
-			hideEvents.forEach(event => {
-				button.addEventListener(event, hide);
-			});
-
-
-			const button_2 = document.querySelector('#googleHelp');
-			const tooltip_2 = document.querySelector('#googleTooltip');
-
-			Popper.createPopper(button_2, tooltip_2, {
+			Popper.createPopper(googleButton, googleTooltip, {
 			modifiers: [
 			  {
 			    name: 'offset',
@@ -235,24 +231,23 @@
 			],
 			});
 
-			function show_2() {
-				tooltip_2.setAttribute('data-show', '');
-			}
+			const showEvents = ['mouseenter', 'focus'];
+			const hideEvents = ['mouseleave', 'blur'];
 
-			function hide_2() {
-				tooltip_2.removeAttribute('data-show');
-			}
+			showEvents.forEach(event => {
+				tweetButton.addEventListener(event, function(){tweetTooltip.setAttribute('data-show', '');});
+				solarButton.addEventListener(event, function(){solarTooltip.setAttribute('data-show', '');});
+				googleButton.addEventListener(event, function(){googleTooltip.setAttribute('data-show', '');});
 
-			const showEvents_2 = ['mouseenter', 'focus'];
-			const hideEvents_2 = ['mouseleave', 'blur'];
-
-			showEvents_2.forEach(event => {
-				button_2.addEventListener(event, show_2);
 			});
 
-			hideEvents_2.forEach(event => {
-				button_2.addEventListener(event, hide_2);
+			hideEvents.forEach(event => {
+				tweetButton.addEventListener(event, function(){tweetTooltip.removeAttribute('data-show');});
+				solarButton.addEventListener(event, function(){solarTooltip.removeAttribute('data-show');});
+				googleButton.addEventListener(event, function(){googleTooltip.removeAttribute('data-show');});
 			});
+
+			
 		</script>
 
 		<script src="js/map.js"></script>
