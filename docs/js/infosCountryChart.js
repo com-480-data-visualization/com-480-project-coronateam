@@ -18,9 +18,9 @@ function drawChart(country, dates, dataCorona, dateIndex){
     ];
 
     const parseDate = d3.timeFormat("%Y-%m-%d");
-    const numDates = 5;
-    let data = [];
-    let background = [];
+    const numDates = 15;
+    let cases = [];
+    let deaths = [];
     let datesLabel = [];
 
     function f(n){
@@ -30,15 +30,13 @@ function drawChart(country, dates, dataCorona, dateIndex){
         return n
     }
 
-    let border = [];
     for (let date = dateIndex; date > dateIndex - numDates && date >= 0; date--) {
         const index = dateIndex - date;
         let currentDate = dates[date];
         dataCorona.forEach(function(d) {
             if (d.date == parseDate(currentDate) && d['country_id'] == country) {
-                data.unshift(d.covid_confirmed);
-                background.unshift(backgroundColors[1]);
-                border.unshift(borderColors[1]);
+                cases.unshift(d.covid_confirmed);
+                deaths.unshift(d.covid_deaths);
                 let x = new Date(d.date);
                 let dateString = x.getDate() + "." + (f(x.getMonth() + 1));
                 datesLabel.unshift(dateString);
@@ -48,15 +46,24 @@ function drawChart(country, dates, dataCorona, dateIndex){
 
     var ctx = document.getElementById('infosCountryChart').getContext('2d');
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: datesLabel,
             datasets: [{
-                label: '# of Confirmed cases',
-                data: data,
-                backgroundColor: background,
-                borderColor: border,
-                borderWidth: 1
+                label: '# of confirmed cases',
+                data: cases,
+                backgroundColor: backgroundColors[1],
+                borderColor: borderColors[1],
+                borderWidth: 1,
+                fill: false
+            },
+            {
+                label: '# of deaths',
+                data: deaths,
+                backgroundColor: backgroundColors[0],
+                borderColor: borderColors[0],
+                borderWidth: 1,
+                fill: false
             }]
         },
         options: {
@@ -64,7 +71,8 @@ function drawChart(country, dates, dataCorona, dateIndex){
                 yAxes: [{
                     ticks: {
                         beginAtZero: true
-                    }
+                    },
+                    type: 'logarithmic'
                 }]
             }
         }
