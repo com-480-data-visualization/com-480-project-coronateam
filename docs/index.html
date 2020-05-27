@@ -29,7 +29,6 @@
 
 	</head>
 	<body>
-
 		<!--   Header  -->
 		<nav class="navbar navbar-expand-lg navbar-light bg-light" id="topnav">
 	        <div class="container-fluid">
@@ -66,13 +65,17 @@
 			<div class="header">GENERAL INFORMATIONS</div>
 
 			<div class="parameters">
-				<label class="container">Show Tweets HeatMap <i class="fas fa-question-circle"></i>
-				  <input type="checkbox" checked="checked">
+				<label class="container">Show Tweets HeatMap
+					<i id="tweetHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
+					<div id="tweetTooltip" role="tooltip">When selected, this option add an HeatMap layer on the vizualisation that represent the density of tweets mentionning coronavirus.</div>
+				  <input type="checkbox" checked="checked" id="heatmap_switch">
 				  <span class="checkmark"></span>
 				</label>
 
-				<label class="container">Show Google Index Score <i class="fas fa-question-circle"></i>
-				  <input type="checkbox">
+				<label class="container">Show Google Index Score
+					<i id="googleHelp" class="fas fa-question-circle" aria-describedby="tooltip"></i>
+					<div id="googleTooltip" role="tooltip">When selected, this option add a Color Scale layer on the vizualisation that represent Google Trend Index of the keyword "coronavirus" in each country/region.</div>
+				  <input type="checkbox" checked="checked" id="google_index_switch">
 				  <span class="checkmark"></span>
 				</label>
 			</div>
@@ -89,7 +92,6 @@
 			</div>
 
 			<div id="solar-plot" class="tabcontent">
-			  <div class="dates"><div><strong>General stats</strong></div></div>
 		      <div id="solar"></div>
 			</div>
 		</div>
@@ -109,12 +111,9 @@
 
 	</div>
 
-
-
-
-
 		<!-- Libraries and scripts TODO: put them in local -->
 		<script src="lib/jquery-3.4.1.slim.min.js"></script>
+		<script src="https://unpkg.com/@popperjs/core@2"></script>
 		<script src="lib/d3.min.js"></script>
 
 		<script src="js/colorbrewer.js"></script>
@@ -135,29 +134,129 @@
 		<!-- <script src="js/3d.js"></script> -->
 
 		<script type="text/javascript">
-				function openTab(evt, idTab) {
-				  // Declare all variables
-				  var i, tabcontent, tablinks;
+			var canvasDrawed = false;
+			function openTab(evt, idTab) {
+			  // Declare all variables
+			  var i, tabcontent, tablinks;
 
-				  // Get all elements with class="tabcontent" and hide them
-				  tabcontent = document.getElementsByClassName("tabcontent");
-				  for (i = 0; i < tabcontent.length; i++) {
-				    tabcontent[i].style.display = "none";
-				  }
+			  // Get all elements with class="tabcontent" and hide them
+			  tabcontent = document.getElementsByClassName("tabcontent");
+			  for (i = 0; i < tabcontent.length; i++) {
+			    tabcontent[i].style.display = "none";
+			  }
 
-				  // Get all elements with class="tablinks" and remove the class "active"
-				  tablinks = document.getElementsByClassName("tablinks");
-				  for (i = 0; i < tablinks.length; i++) {
-				    tablinks[i].className = tablinks[i].className.replace(" active", "");
-				  }
+			  // Get all elements with class="tablinks" and remove the class "active"
+			  tablinks = document.getElementsByClassName("tablinks");
+			  for (i = 0; i < tablinks.length; i++) {
+			    tablinks[i].className = tablinks[i].className.replace(" active", "");
+			  }
 
-				  // Show the current tab, and add an "active" class to the button that opened the tab
-				  document.getElementById(idTab).style.display = "block";
-				  evt.currentTarget.className += " active";
+			  // Show the current tab, and add an "active" class to the button that opened the tab
+			  document.getElementById(idTab).style.display = "block";
+			  evt.currentTarget.className += " active";
+
+
+			  ///////////////////////////////////////////
+			  /////////////////SOLAR/////////////////////
+			  ///////////////////////////////////////////
+
+			  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
+			  // second is ring (range 0 to 1), aka Radial Coordinate.
+			  // third is node size radius (center to edge)
+
+			  if (idTab == "solar-plot" && !canvasDrawed){
+					var dataCorrelation = [
+					    [0,1,"Confirmed","sun"],
+					   // [0,0.96779387,"Deaths","planet"],
+					    [4.569589314,0.17625356,"Neighbors","planet"],
+					    [5.569186977,0.24385586,"Measures","planet"],
+					    [1.713595993,0.68897829,"Trends","planet"],
+					    [2.250012,0.62,"Tweets","moon"],
+					    [2.192409,0.45,"Pop","moon"],
+					    [3.488445,-0.25,"Young","moon"],
+					    [3.427191986,0.3239101,"Elderly","planet_moon"],
+					    [2.284794657,0.52632641,"GDP","planet_moon"],
+					    [4.783788813,0.22491564,"Health exp","planet"],
+					    [3.99839065,-0.20621249,"Internet","planet"]
+					  ]; //will be replaced by data_solar.csv
+
+
+				  drawSolar(dataCorrelation);//Draw solar plot
+				  canvasDrawed = true;
 				}
+			}
 
-				// Get the element with id="defaultOpen" and click on it
-				document.getElementById("left-button").click();
-			</script>
+			// Get the element with id="defaultOpen" and click on it
+			document.getElementById("left-button").click();
+		</script>
+
+		<script type="text/javascript">
+			const button = document.querySelector('#tweetHelp');
+			const tooltip = document.querySelector('#tweetTooltip');
+
+			Popper.createPopper(button, tooltip, {
+			modifiers: [
+			  {
+			    name: 'offset',
+			    options: {
+			      offset: [-200, -140],
+			    },
+			  },
+			],
+			});
+
+			function show() {
+				tooltip.setAttribute('data-show', '');
+			}
+
+			function hide() {
+				tooltip.removeAttribute('data-show');
+			}
+
+			const showEvents = ['mouseenter', 'focus'];
+			const hideEvents = ['mouseleave', 'blur'];
+
+			showEvents.forEach(event => {
+				button.addEventListener(event, show);
+			});
+
+			hideEvents.forEach(event => {
+				button.addEventListener(event, hide);
+			});
+
+
+			const button_2 = document.querySelector('#googleHelp');
+			const tooltip_2 = document.querySelector('#googleTooltip');
+
+			Popper.createPopper(button_2, tooltip_2, {
+			modifiers: [
+			  {
+			    name: 'offset',
+			    options: {
+			      offset: [-200, -175],
+			    },
+			  },
+			],
+			});
+
+			function show_2() {
+				tooltip_2.setAttribute('data-show', '');
+			}
+
+			function hide_2() {
+				tooltip_2.removeAttribute('data-show');
+			}
+
+			const showEvents_2 = ['mouseenter', 'focus'];
+			const hideEvents_2 = ['mouseleave', 'blur'];
+
+			showEvents_2.forEach(event => {
+				button_2.addEventListener(event, show_2);
+			});
+
+			hideEvents_2.forEach(event => {
+				button_2.addEventListener(event, hide_2);
+			});
+		</script>
 	</body>
 </html>

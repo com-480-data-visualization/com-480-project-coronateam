@@ -1,8 +1,19 @@
 var width  = window.innerWidth,
     height = window.innerHeight;
 
+const scale = 1200 * width / 1440;
+var heatmap_enabled = true
+var colorTrend_enabled = true
+
 // The svg containing all our viz
-var svg =  d3.select("#map")
+var svg_global =  d3.select("#map")
+  .append("svg")
+  .attr("viewBox", "0 0 " + width + " "+ height)
+  .append("g")
+  .attr("width", width)
+  .attr("height", height);
+
+var svg =  svg_global
   .append("svg")
   .attr("viewBox", "0 0 " + width + " "+ height)
   .append("g")
@@ -18,16 +29,17 @@ var canvasLayer = d3.select("#heatmap")
 var canvas = canvasLayer.node(),
     ctx    = canvas.getContext("2d");
 
-// Map projection to compute coordinates
+// Map projection to compute coordinates (width/640)*100
+console.log("width:", width)
 var projection = d3.geoMercator()
   .center([5,48])
-  .scale(1200)
+  .scale(scale)
   .translate([ width/2, height/2 ]);
 
 // Projection used to position the heatmap during zoom
 var projectionCanvas = d3.geoMercator()
     .center([5,48])
-    .scale(1200)
+    .scale(scale)
     .translate([ width/2, height/2 ]);
 
 
@@ -62,28 +74,6 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
   var trendsMap = d3.map();
 
   ///////////////////////////////////////////
-  /////////////////SOLAR/////////////////////
-  ///////////////////////////////////////////
-
-  // first is position clockwise, aka angular coordinate, polar angle, or azimuth. range from 0 - 359
-  // second is ring (range 0 to 1), aka Radial Coordinate.
-  // third is node size radius (center to edge)
- 
-
-  var dataCorrelation = [
-    [0, 1, 'Confirmed'],
-    [0, 0.96779387, 'Deaths'],
-    [1.7135959928671598, 0.68897829, 'Trends'],
-    [4.569589314312426, 0.17482298, 'Tweets'],
-    [2.2514747351, 0.49888116, 'Pop'],
-    [3.4271919857343196, -0.32202591, 'Youngs'],
-    [2.284794657156213, 0.52632641, 'GDP'],
-  ]; //will be replaced by data_solar.csv
-
-
-drawSolar(dataCorrelation); //Draw solar plot
-
-  ///////////////////////////////////////////
   ////////////////////MAP////////////////////
   ///////////////////////////////////////////
 
@@ -99,7 +89,7 @@ drawSolar(dataCorrelation); //Draw solar plot
     .enter()
       .append("path")
       .attr("fill", function (d) {
-        return colorScaleTrends(1);
+        return colorScaleTrends(0);
         })
       .attr("d", d3.geoPath().projection(projection))
       .style("stroke", "#abb7b7")
@@ -123,7 +113,7 @@ drawSolar(dataCorrelation); //Draw solar plot
 
   // Update the map color depending on if the map is zoomed/centered on a country
   var displayMap = function(trendsMap, trendsMapRegions){
-    if (!centered){
+    if (!centered && colorTrend_enabled){
       svg.selectAll("path").attr("fill", function (d) {
       var infos = d3.map(trendsMap.get(d.properties.id));
       d.total = infos.get('trends_covid') || 0;
@@ -137,7 +127,7 @@ drawSolar(dataCorrelation); //Draw solar plot
           .attr("d", d3.geoPath()
           .projection(projection));
 
-      if(trendsMapRegions){
+      if(trendsMapRegions && colorTrend_enabled){
         g.selectAll(".path_regions").attr("fill", function (d) {
           var infos = d3.map(trendsMapRegions.get(d.properties.id));
           d.total = infos.get('trends_covid') || 0;
@@ -146,7 +136,6 @@ drawSolar(dataCorrelation); //Draw solar plot
         })
         .attr("d", d3.geoPath()
             .projection(projection));
-
       }
     }
   };
@@ -222,14 +211,15 @@ drawSolar(dataCorrelation); //Draw solar plot
   ///////////////////////////////////////////
   /////////////////HEATMAP//////////////////
   ///////////////////////////////////////////
-
   var displayHeat = function(data){
-    var heat = simpleheat(canvas);
-    data.forEach(d => {d.coords=projectionCanvas([d.lon, d.lat]); })
-    heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
-    heat.radius(10, 10);
-    heat.max(d3.max(data, d => +d.covid_tweets));
-    heat.draw(0.05);
+    if(heatmap_enabled){
+      var heat = simpleheat(canvas);
+      data.forEach(d => {d.coords=projectionCanvas([d.lon, d.lat]); })
+      heat.data(data.map(d => { return [d.coords[0], d.coords[1], +d.covid_tweets]}));
+      heat.radius(10, 10);
+      heat.max(d3.max(data, d => +d.covid_tweets));
+      heat.draw(0.05);
+    }
   }
 
   ///////////////////////////////////////////
@@ -500,7 +490,7 @@ drawSolar(dataCorrelation); //Draw solar plot
   var distance_from_top = (height - 50)
 
   // Color Legend
-  svg
+  svg_global
     .append("text")
       .style("fill", "black")
       .attr("x", 20)
@@ -509,7 +499,7 @@ drawSolar(dataCorrelation); //Draw solar plot
       .html("Google Index")
       .style("font-size", 12)
 
-  svg.selectAll("dots")
+  svg_global.selectAll("dots")
     .data(labels)
     .enter()
     .append("rect")
@@ -519,7 +509,7 @@ drawSolar(dataCorrelation); //Draw solar plot
       .attr("height", size_l)
       .style("fill", function(d){ return colorScaleTrends(d)})
 
-  svg.selectAll("labels")
+  svg_global.selectAll("labels")
     .data(labels)
     .enter()
     .append("text")
@@ -536,7 +526,7 @@ drawSolar(dataCorrelation); //Draw solar plot
   var xLabel = xCircle - 80;
   var yCircle = height - 40;
 
-  svg
+  svg_global
     .selectAll("legend")
     .data(valuesToShow)
     .enter()
@@ -547,7 +537,7 @@ drawSolar(dataCorrelation); //Draw solar plot
       .style("fill", "none")
       .attr("stroke", "black")
 
-  svg
+  svg_global
     .selectAll("legend")
     .data(valuesToShow)
     .enter()
@@ -559,7 +549,7 @@ drawSolar(dataCorrelation); //Draw solar plot
       .attr('stroke', 'black')
       .style('stroke-dasharray', ('2,2'))
 
-  svg
+  svg_global
     .selectAll("legend")
     .data(valuesToShow)
     .enter()
@@ -572,4 +562,32 @@ drawSolar(dataCorrelation); //Draw solar plot
       .style("font-size", 12)
       .attr('alignment-baseline', 'middle')
       .attr('text-anchor', 'end')
+
+
+
+///////////////////////////////////////////
+//////////////////ON/OFF //////////////////
+///////////////////////////////////////////
+
+  var colorTrendButton = document.getElementById('google_index_switch');
+  colorTrendButton.onclick = function(){
+    if(colorTrend_enabled){colorTrend_enabled = false; }
+    else{ colorTrend_enabled = true; }
+    displayMap(trendsMap, trendsMapRegions);
+  };
+
+  var colorTrendButton = document.getElementById('heatmap_switch');
+  colorTrendButton.onclick = function(){
+    if(heatmap_enabled){
+      heatmap_enabled = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    else {
+      heatmap_enabled = true;
+      displayHeat(newDataTweets)
+    }
+
+  };
+
+
 });
