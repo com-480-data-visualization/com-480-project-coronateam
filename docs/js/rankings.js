@@ -1,14 +1,14 @@
 function drawRankings(data, currentDate) {
-    let margin = { top: 30, bottom: 5, left: 50, right: 20 };
-    let width = document.getElementById('rankings').offsetWidth - margin.right,
-        height = document.getElementById('rankings').offsetHeight;
+    let margin = { top: 30, bottom: 5, left: 30, right: 20 };
+    let width = document.getElementById('rankings').offsetWidth - margin.right - margin.left,
+        height = document.getElementById('rankings').offsetHeight - margin.top - margin.bottom;
 
     d3.select('#rankings').selectAll("svg").remove();
 
     let g = d3.select('#rankings')
         .append('svg')
-        .attr('width', width)
-        .attr('height', height)
+        .attr('width', width + margin.left)
+        .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -29,9 +29,9 @@ function drawRankings(data, currentDate) {
     let count = 0;
     const maxDisplay = 10;
     data = data.sort(function(a,b) { return +b['covid_confirmed'] - +a['covid_confirmed'] })
-        .filter(d => d.date == parseDate(currentDate) && count++ < maxDisplay)
+        .filter(d => count++ < maxDisplay && d['covid_confirmed'] > 0)
 
-    xscale.domain([0, d3.max(data, d => d['covid_confirmed'])]).nice();
+    xscale.domain([0, d3.max(data, d => parseInt(d['covid_confirmed']))]).nice();
     yscale.domain(data.map(d => d['country_id']));
 
     let rect = g
@@ -77,16 +77,16 @@ function drawRankings(data, currentDate) {
 
     rect
         .transition()
-        .duration(0) // 400
+        .duration(0) //Attracts the eye otherwise
         .attr("height", yscale.bandwidth())
         .attr("width", d => xscale(d['covid_confirmed']))
         .attr("y", d => yscale(d['country_id']));
 
     textLabels
         .transition()
-        .duration(0) // 400
+        .duration(0)
         .attr("height", yscale.bandwidth())
-        .attr("x", 18)
+        .attr("x", 14)
         .attr("opacity", 1)
         .attr("y", d => yscale(d['country_id']) + 16)
         .text( function(d, i){
@@ -94,11 +94,9 @@ function drawRankings(data, currentDate) {
             }
         );
 
-        g_xaxis.transition().call(
-            xaxis
-                .ticks(5)
-                .tickFormat( d3.format(".0s") )
-        );
+        g_xaxis.transition().call(xaxis
+            .ticks(5)
+            .tickFormat( d3.format(".0s")));
         g_yaxis.transition().call(yaxis);
 
 
