@@ -389,7 +389,7 @@ Promise.all([d3.json("data/europe_countries.geojson"), d3.csv("data/geocoded_twe
     displayMap(trendsMap, trendsMapRegions);
     displayHeat(newDataTweets);
     displayCircles(newDataCorona);
-    drawRankings(newDataCorona, currentDate);
+    drawRankings(newDataCorona);
     if(currentCountry != null)
       displayDetail(currentCountry)
   }
