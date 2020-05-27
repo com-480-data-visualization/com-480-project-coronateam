@@ -9,8 +9,8 @@ function drawChart(country, dates, dataCorona, dateIndex){
     ];
 
     const borderColors = [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
+        'rgba(246, 71, 71, 1)',
+        'rgba(52, 73, 94, 1)',
         'rgba(255, 206, 86, 1)',
         'rgba(75, 192, 192, 1)',
         'rgba(153, 102, 255, 1)',
@@ -67,8 +67,13 @@ function drawChart(country, dates, dataCorona, dateIndex){
             }]
         },
         options: {
+            animation: false,
             scales: {
+
                 yAxes: [{
+                    gridLines: {
+                        color: "rgba(0, 0, 0, 0)",
+                    },   
                     ticks: {
                         beginAtZero: true
                     },
