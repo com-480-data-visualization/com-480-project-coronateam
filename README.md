@@ -57,7 +57,7 @@ $ python -m SimpleHTTPServer 8000
 
 | Anaïs Ladoy | François Quellec |Lucas Strauss |
 | :---: |:---:| :---:|
-| ![Anais](https://avatars2.githubusercontent.com/u/28190136?s=200&v=4) | ![Francois] (https://avatars0.githubusercontent.com/u/17878016?s=200&u=a607a98f9962178dca27e091af3ea41b0a584592&v=4) | ![Lucas](https://avatars2.githubusercontent.com/u/23017180?s=200&u=c136e443542666b16713834b48749b5174fa5760&v=4) |
+| ![Anais](https://avatars2.githubusercontent.com/u/28190136?s=200&v=4) | ![Francois](https://avatars0.githubusercontent.com/u/17878016?s=200&u=a607a98f9962178dca27e091af3ea41b0a584592&v=4) | ![Lucas](https://avatars2.githubusercontent.com/u/23017180?s=200&u=c136e443542666b16713834b48749b5174fa5760&v=4) |
 | <a href="https://github.com/aladoy" target="_blank">`github.com/aladoy`</a> | <a href="https://github.com/Fanfou02" target="_blank">`github.com/Fanfou02`</a> | <a href="https://github.com/VFXOne" target="_blank">`github.com/VFXOne`</a> |
 
 
