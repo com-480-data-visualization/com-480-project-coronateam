@@ -44,8 +44,10 @@ function drawChart(country, dates, dataCorona, dateIndex){
         });
     }
 
-    var ctx = document.getElementById('infosCountryChart').getContext('2d');
-    var myChart = new Chart(ctx, {
+    let format = d3.format('.1s');
+
+    let ctx = document.getElementById('infosCountryChart').getContext('2d');
+    let myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: datesLabel,
@@ -77,7 +79,7 @@ function drawChart(country, dates, dataCorona, dateIndex){
                     ticks: {
                         beginAtZero: true
                     },
-                    type: 'logarithmic'
+                    type:   'logarithmic'
                 }]
             }
         }
