@@ -36,7 +36,7 @@ A complete description of the data used in this project is presented below.
 | Internet users | Internet users in % of total population (csv) | [World Bank, 2017](https://data.worldbank.org/indicator/SH.XPD.CHEX.GD.ZS) | Country-level | Yearly |
 | National responses to COVID-19 | National response to COVID-19 classifies in three categories (i.e. State emergency, Partial confinement, Total confinement)  | [Ouest France, 18/03/2020](https://www.ouest-france.fr/sante/virus/coronavirus/carte-coronavirus-quels-pays-ont-adopte-le-confinement-general-6784490) | Country-level | Yearly |
 
-## Second step: Data analysis
+## Second step: Data analysis
 
 ### Cleaning and geocoding
 We had to standardize the data to be able to use them easily on our website. Because our datasets came from various sources and file formats (.csv, .json, etc…), there were some inconsistencies in the name of the countries for example. 
@@ -58,7 +58,7 @@ For Italy, the google search spike coincides perfectly with the outbreak of COVI
 
 With regard to the number of tweets about COVID-19, although trends and uses are different in each country, the fluctuations still seem to be directly related to the spread of the virus in each country. The two graphs presented above indicates a correlation between the reaction of the population on Twitter and Google, and the geographical evolution of the pandemic. These findings are encouraging us in the desire to explore these variables on an interactive map.
 
-### Third step: Data visualization
+### Third step: Data visualization
 
 The last phase of our project was to build a web application using data visualization techniques that will summarize the information contained in our data in a efficient and esthetic way. First, we sketched the three variables with QGIS to make sure it was readable (see figure below). Some small changes have been made during the implementation and we describe each feature in the next parts.
 
