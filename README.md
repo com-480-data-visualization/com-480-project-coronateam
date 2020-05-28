@@ -1,5 +1,7 @@
 # Project of Data Visualization (COM-480)
 
+![Dashboard](https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/imgs/dashboard.png)
+
 | Student's name | SCIPER |
 | -------------- | ------ |
 | Lucas Strauss | 272432 |
@@ -11,49 +13,52 @@
 [Guidelines](https://com-480-data-visualization.github.io/2020-project-guidelines/)
 
 ---
+## Workspace
+
+- All the required code for the app is in `docs\`.
+- The datasets used are in `docs\data\`.
+- The scripts used to mine the datasets are in `docs\scripts\`
 
 ## Installation
 
-- All the `code` required to get started
-- Images of what it should look like
-
 ### Clone
 
-- Clone this repo to your local machine using `https://github.com/fvcproductions/SOMEREPO`
+> Clone this repo to your local machine using 
+```shell
+$ git clone https://github.com/com-480-data-visualization/com-480-project-coronateam.git
+```
 
 ### Setup
 
-- If you want more syntax highlighting, format your code like this:
-
-> update and install this package first
+> Go to the `docs` folder with your terminal and install dependencies by executing the following
 
 ```shell
-$ brew update
-$ brew install fvcproductions
+$ npm install requirement.txt
 ```
 
-> now install npm and bower packages
+> now install SimpleServer or another web server client to host the web app and run it, e,g: 
 
 ```shell
-$ npm install
-$ bower install
+$ python -m SimpleHTTPServer 8000
 ```
+> Finally open your browser and go to `http://localhost:8000/`. Enjoy !
 
-- For all the possible languages that support syntax highlithing on GitHub (which is basically all of them), refer <a href="https://github.com/github/linguist/blob/master/lib/linguist/languages.yml" target="_blank">here</a>.
+![demo GIF](https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/demo.gif)
 
 ---
-
-## Features
-
 
 ## Team
 
 > Or Contributors/People
 
-| <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> | <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> | <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> |
+| Anaïs Ladoy | François Quellec |Lucas Strauss |
 | :---: |:---:| :---:|
-| [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)    | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com) | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)  |
-| <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> |
+| [![Anais](https://avatars2.githubusercontent.com/u/28190136?s=460&v=4)]()    
+| [![François](https://avatars0.githubusercontent.com/u/17878016?s=460&u=a607a98f9962178dca27e091af3ea41b0a584592&v=4)]() 
+| [![Lucas](https://avatars2.githubusercontent.com/u/23017180?s=460&u=c136e443542666b16713834b48749b5174fa5760&v=4)]()  |
+| <a href="https://github.com/aladoy" target="_blank">`github.com/aladoy`</a> 
+| <a href="https://github.com/Fanfou02" target="_blank">`github.com/Fanfou02`</a> 
+| <a href="https://github.com/VFXOne" target="_blank">`github.com/VFXOne`</a> |
 
 
 ## License
