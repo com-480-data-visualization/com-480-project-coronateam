@@ -13,8 +13,7 @@ function drawRankings(data) {
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-
-    // Echelles
+    // Scales
     let xscale = d3.scaleLinear().range([0, width - 50]);
     let yscale = d3
         .scaleBand()
@@ -30,7 +29,7 @@ function drawRankings(data) {
     let count = 0;
     const maxDisplay = 10;
     data = data.sort(function(a,b) { return +b['covid_confirmed'] - +a['covid_confirmed'] })
-        .filter(d => count++ < maxDisplay && d['covid_confirmed'] > 0)
+        .filter(d => count++ < maxDisplay && d['covid_confirmed'] > 0) //Sort and retain only first maxDisplay
 
     xscale.domain([0, d3.max(data, d => parseInt(d['covid_confirmed']))]).nice();
     yscale.domain(data.map(d => d['country_id']));
@@ -41,8 +40,10 @@ function drawRankings(data) {
         .join(
             enter => {
                 var rect_enter = enter.append("rect")
+                    .attr("height", yscale.bandwidth())
+                    .attr("width", d => xscale(d['covid_confirmed']))
                     .attr("x", 5)
-                    .attr("y", height) // les pays partent du bas, plop
+                    .attr("y", d => yscale(d['country_id']) + 2)
                     .style("fill", '#34495e');
                 return rect_enter;
             },
@@ -56,10 +57,11 @@ function drawRankings(data) {
             enter => {
                 var textLabels_enter = enter.append("text")
                     .attr("class", "textLabels")
-                    .attr("x", 0)
-                    .attr("y", height) // les pays partent du bas, plop
+                    .attr("height", yscale.bandwidth())
+                    .attr("x", d => xscale(d['covid_confirmed']) + 14)
+                    .attr("opacity", 1)
+                    .attr("y", d => yscale(d['country_id']) + 20)
                     .attr("text-anchor", "right")
-                    .attr("opacity", 0)
                     .attr("fill", '#000')
                     .text( function(d){
                             return d['covid_confirmed'];
@@ -69,25 +71,6 @@ function drawRankings(data) {
                 return textLabels_enter;
             },
             exit => exit.remove()
-        );
-
-    rect
-        .transition()
-        .duration(0) //Attracts the eye otherwise
-        .attr("height", yscale.bandwidth())
-        .attr("width", d => xscale(d['covid_confirmed']))
-        .attr("y", d => yscale(d['country_id']) + 2);
-
-    textLabels
-        .transition()
-        .duration(0)
-        .attr("height", yscale.bandwidth())
-        .attr("x", d => xscale(d['covid_confirmed']) + 14)
-        .attr("opacity", 1)
-        .attr("y", d => yscale(d['country_id']) + 20)
-        .text( function(d, i){
-                return d['covid_confirmed'];
-            }
         );
 
         g_xaxis.transition().call(xaxis
