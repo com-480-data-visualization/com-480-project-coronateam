@@ -33,17 +33,21 @@ $ git clone https://github.com/com-480-data-visualization/com-480-project-corona
 > Go to the `docs` folder with your terminal and install dependencies by executing the following
 
 ```shell
-$ npm install requirement.txt
+$ npm install
 ```
 
-> now install SimpleServer or another web server client to host the web app and run it, e,g: 
+> now to host the web app and run it, e,g: 
 
 ```shell
+# On Mac OS
 $ python -m SimpleHTTPServer 8000
+
+# On Windows/Linux
+$ pyhton -m http.server
 ```
 > Finally open your browser and go to `http://localhost:8000/`. Enjoy !
 
-![demo GIF](https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/demo.gif)
+![demo GIF](https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/imgs/demo.gif)
 
 ---
 
