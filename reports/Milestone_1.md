@@ -45,12 +45,12 @@ The central element of our visualization will be an interactive map, allowing th
 As our objective is to study the association between the spread of the pandemic and the flow of information on social network and search engines, we first plotted the correlation between reported cases, tweets, and web searches, for 4 European countries that were early affected by the disease.
 
 ##### Google search index versus COVID-19 cases
-![alt text](imgs/covidVsGtrend.png "Google search index versus Coronavirus")
+![alt text](https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/imgs/covidVsGtrend.png "Google search index versus Coronavirus")
 
 For Italy, the google search spike coincides perfectly with the outbreak of COVID-19 cases in the country. It is also interesting to note that the countries surrounding Italy are seeing an increase in the number of searches a few days after Italy, which seem to be related to the spread of the virus in Italy and not only in their respective countries.
 
 ##### Number of tweets versus COVID-19 cases
-![alt text](imgs/covidVsTweets.png "Number of tweets versus Coronavirus")
+![alt text](https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/imgs/covidVsTweets.png "Number of tweets versus Coronavirus")
 
 With regard to the number of tweets about COVID-19, although trends and uses are different in each country, the fluctuations still seem to be directly related to the spread of the virus in each country.
 
