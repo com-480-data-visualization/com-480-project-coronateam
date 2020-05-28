@@ -8,7 +8,7 @@
 | Anais Ladoy | 216090 |
 | François Quellec | 225118 |
 
-[Milestone 1](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/reports/Milestone_1.md) • [Milestone 2](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/reports/Milestone_2.md) • [Milestone 3](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/reports/Milestone_3.md)
+[Milestone 1](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/reports/Milestone_1.md) • [Milestone 2](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/reports/Milestone_2.md) • [Milestone 3](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/reports/Milestone_3.md) ([PDF](https://github.com/com-480-data-visualization/com-480-project-coronateam/raw/master/reports/Process_Book.pdf))
 
 [Guidelines](https://com-480-data-visualization.github.io/2020-project-guidelines/)
 
