@@ -51,7 +51,7 @@ $ pyhton -m http.server
 
 
 <p align="center">
-  <img src='https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/demo.gif' />
+  <img src='https://raw.githubusercontent.com/com-480-data-visualization/com-480-project-coronateam/master/imgs/demo.gif' />
 </p>
 
 ---
