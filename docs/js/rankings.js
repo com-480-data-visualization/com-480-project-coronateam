@@ -14,7 +14,7 @@ function drawRankings(data) {
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Scales
-    let xscale = d3.scaleLinear().range([0, width - 50]);
+    let xscale = d3.scaleLinear().range([0, width-50]);
     let yscale = d3
         .scaleBand()
         .rangeRound([0, height])
