@@ -14,6 +14,8 @@
 
 [Live Demo](https://com-480-data-visualization.github.io/com-480-project-coronateam/)
 
+[ScreenCast](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/imgs/screencast.mp4)
+
 ---
 ## Workspace
 
@@ -58,7 +60,6 @@ $ pyhton -m http.server
 
 ## Team
 
-> Or Contributors/People
 
 | Anaïs Ladoy | François Quellec |Lucas Strauss |
 | :---: |:---:| :---:|
