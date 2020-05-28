@@ -14,7 +14,7 @@
 
 [Live Demo](https://com-480-data-visualization.github.io/com-480-project-coronateam/)
 
-[ScreenCast](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/imgs/screencast.mp4)
+[ScreenCast](https://github.com/com-480-data-visualization/com-480-project-coronateam/blob/master/imgs/screencast.mp4)([Youtube](https://youtu.be/mRH9YIl_oeU))
 
 ---
 ## Workspace
